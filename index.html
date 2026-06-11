@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fishbone Diagram Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 24px;
+            color: #222;
+        }
+        
+        h2 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 8px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 6px;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .causes-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .cause-column h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #007bff;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .cause-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .cause-input {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .cause-input input {
+            flex: 1;
+        }
+        
+        button.remove-btn {
+            padding: 8px 12px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        button.remove-btn:hover {
+            background: #c82333;
+        }
+        
+        button.add-btn {
+            padding: 8px 16px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+        
+        button.add-btn:hover {
+            background: #218838;
+        }
+        
+        button.export-btn {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 20px;
+            width: 100%;
+        }
+        
+        button.export-btn:hover {
+            background: #0056b3;
+        }
+        
+        .canvas-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            min-height: 600px;
+        }
+        
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="panel">
+            <h1>Fishbone Diagram</h1>
+            
+            <div class="input-group">
+                <label>Problem/Effect</label>
+                <input type="text" id="problemInput" placeholder="Enter the main problem or effect">
+            </div>
+            
+            <h2>Causes (6M Framework)</h2>
+            
+            <div class="causes-grid">
+                <div class="cause-column">
+                    <h3>Men (People)</h3>
+                    <div class="cause-items" id="menCauses"></div>
+                    <button class="add-btn" onclick="addCause('men')">+ Add</button>
+                </div>
+                
+                <div class="cause-column">
+                    <h3>Methods</h3>
+                    <div class="cause-items" id="methodsCauses"></div>
+                    <button class="add-btn" onclick="addCause('methods')">+ Add</button>
+                </div>
+                
+                <div class="cause-column">
+                    <h3>Materials</h3>
+                    <div class="cause-items" id="materialsCauses"></div>
+                    <button class="add-btn" onclick="addCause('materials')">+ Add</button>
+                </div>
+                
+                <div class="cause-column">
+                    <h3>Machines</h3>
+                    <div class="cause-items" id="machinesCauses"></div>
+                    <button class="add-btn" onclick="addCause('machines')">+ Add</button>
+                </div>
+                
+                <div class="cause-column">
+                    <h3>Measurement</h3>
+                    <div class="cause-items" id="measurementCauses"></div>
+                    <button class="add-btn" onclick="addCause('measurement')">+ Add</button>
+                </div>
+                
+                <div class="cause-column">
+                    <h3>Environment</h3>
+                    <div class="cause-items" id="environmentCauses"></div>
+                    <button class="add-btn" onclick="addCause('environment')">+ Add</button>
+                </div>
+            </div>
+            
+            <button class="export-btn" onclick="exportDiagram()">Download as PNG</button>
+        </div>
+        
+        <div class="canvas-wrapper">
+            <canvas id="fishboneCanvas" width="600" height="600"></canvas>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        const state = {
+            problem: '',
+            men: [],
+            methods: [],
+            materials: [],
+            machines: [],
+            measurement: [],
+            environment: []
+        };
+        
+        function addCause(category) {
+            state[category].push('');
+            renderInputs();
+            draw();
+        }
+        
+        function removeCause(category, index) {
+            state[category].splice(index, 1);
+            renderInputs();
+            draw();
+        }
+        
+        function updateCause(category, index, value) {
+            state[category][index] = value;
+            draw();
+        }
+        
+        function updateProblem(value) {
+            state.problem = value;
+            draw();
+        }
+        
+        function renderInputs() {
+            const categories = ['men', 'methods', 'materials', 'machines', 'measurement', 'environment'];
+            
+            categories.forEach(cat => {
+                const container = document.getElementById(cat + 'Causes');
+                container.innerHTML = state[cat].map((item, idx) => `
+                    <div class="cause-input">
+                        <input 
+                            type="text" 
+                            placeholder="Enter cause" 
+                            value="${item}"
+                            onchange="updateCause('${cat}', ${idx}, this.value)"
+                            oninput="updateCause('${cat}', ${idx}, this.value)"
+                        >
+                        <button class="remove-btn" onclick="removeCause('${cat}', ${idx})">×</button>
+                    </div>
+                `).join('');
+            });
+        }
+        
+        function draw() {
+            const canvas = document.getElementById('fishboneCanvas');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, width, height);
+            
+            const centerX = width / 2;
+            const centerY = height / 2;
+            
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 16px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Main spine
+            ctx.beginPath();
+            ctx.moveTo(100, centerY);
+            ctx.lineTo(width - 100, centerY);
+            ctx.stroke();
+            
+            // Head (problem box)
+            const headX = width - 100;
+            const headWidth = 80;
+            const headHeight = 50;
+            ctx.strokeRect(headX - headWidth, centerY - headHeight / 2, headWidth, headHeight);
+            
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(state.problem || 'Problem', headX - headWidth / 2, centerY);
+            
+            // Bone positions and labels
+            const bones = [
+                { category: 'men', position: 0.15, side: 'top', label: 'Men' },
+                { category: 'methods', position: 0.3, side: 'bottom', label: 'Methods' },
+                { category: 'materials', position: 0.45, side: 'top', label: 'Materials' },
+                { category: 'machines', position: 0.6, side: 'bottom', label: 'Machines' },
+                { category: 'measurement', position: 0.75, side: 'top', label: 'Measurement' },
+                { category: 'environment', position: 0.9, side: 'bottom', label: 'Environment' }
+            ];
+            
+            bones.forEach(bone => {
+                const boneX = 100 + (width - 200) * bone.position;
+                const angle = bone.side === 'top' ? -45 : 45;
+                const rad = angle * Math.PI / 180;
+                const boneLength = 80;
+                const endX = boneX + boneLength * Math.cos(rad);
+                const endY = centerY + boneLength * Math.sin(rad);
+                
+                ctx.strokeStyle = '#666';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(boneX, centerY);
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+                
+                // Bone label
+                ctx.fillStyle = '#007bff';
+                ctx.font = 'bold 11px sans-serif';
+                const labelOffsetX = bone.side === 'top' ? -20 : -20;
+                const labelOffsetY = bone.side === 'top' ? -15 : 15;
+                ctx.textAlign = 'center';
+                ctx.fillText(bone.label, endX + labelOffsetX, endY + labelOffsetY);
+                
+                // Sub-bones (causes)
+                const causes = state[bone.category];
+                causes.forEach((cause, idx) => {
+                    if (!cause) return;
+                    
+                    const subAngle = angle + (idx - causes.length / 2 + 0.5) * 15;
+                    const subRad = subAngle * Math.PI / 180;
+                    const subLength = 40;
+                    const subEndX = endX + subLength * Math.cos(subRad);
+                    const subEndY = endY + subLength * Math.sin(subRad);
+                    
+                    ctx.strokeStyle = '#999';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(endX, endY);
+                    ctx.lineTo(subEndX, subEndY);
+                    ctx.stroke();
+                    
+                    // Cause text
+                    ctx.fillStyle = '#555';
+                    ctx.font = '10px sans-serif';
+                    ctx.textAlign = bone.side === 'top' ? 'right' : 'left';
+                    ctx.fillText(cause, subEndX + (bone.side === 'top' ? -5 : 5), subEndY);
+                });
+            });
+        }
+        
+        function exportDiagram() {
+            const canvas = document.getElementById('fishboneCanvas');
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'fishbone-diagram.png';
+            link.click();
+        }
+        
+        // Initialize
+        renderInputs();
+        draw();
+        
+        // Re-draw on window resize
+        window.addEventListener('resize', draw);
+    </script>
+</body>
+</html>
