@@ -5,321 +5,255 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fishbone Diagram</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
-            background: #f5f5f5;
-            color: #333;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        h1 {
-            font-size: 24px;
-            margin-bottom: 4px;
-            font-weight: 600;
-        }
-        
-        .diagram-wrapper {
-            position: relative;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
-            overflow: auto;
-        }
-        
-        .fishbone-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-        }
-        
-        svg {
-            max-width: 80vw;
-            max-height: 80vh;
-            height: auto;
-            width: auto;
-        }
-        
-        .export-btn {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            padding: 8px 16px;
-            background: #333;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-        
-        .export-btn:hover {
-            background: #000;
-        }
-        
-        .text-editor {
-            position: absolute;
-            background: white;
-            border: 2px solid #333;
-            border-radius: 2px;
-            padding: 2px 4px;
-            font-size: 12px;
-            font-family: inherit;
-            color: #000;
-            z-index: 100;
-            min-width: 60px;
-            max-width: 200px;
-        }
-        
-        .text-editor:focus {
-            outline: none;
-            border-color: #0066cc;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f9fa; }
+        .container { max-width: 100%; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        h1 { font-size: 28px; margin-bottom: 8px; }
+        .subtitle { color: #666; font-size: 14px; }
+        .diagram-area { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 40px; position: relative; }
+        .svg-wrapper { position: relative; display: inline-block; width: 100%; }
+        svg { border: 1px solid #eee; display: block; margin: 0 auto; max-width: 100%; background: white; }
+        .control-panel { margin-top: 30px; padding: 20px; background: #f5f5f5; border-radius: 6px; }
+        .control-row { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; }
+        .control-row label { font-weight: 600; min-width: 120px; }
+        button { padding: 8px 16px; background: #333; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        button:hover { background: #000; }
+        button.icon-btn { padding: 6px 10px; font-size: 16px; min-width: 40px; }
+        .dropdown-menu { position: absolute; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 1000; min-width: 180px; }
+        .dropdown-menu input { width: 100%; padding: 8px 10px; border: none; border-bottom: 1px solid #eee; font-size: 12px; }
+        .dropdown-menu input:focus { outline: none; }
+        .dropdown-item { padding: 8px 12px; font-size: 12px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
+        .dropdown-item:hover { background: #f5f5f5; }
+        .dropdown-item:last-child { border-bottom: none; }
+        .export-btn { position: absolute; bottom: 20px; right: 20px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>Fishbone Diagram</h1>
+            <p class="subtitle">Interactive cause-and-effect analysis</p>
         </div>
         
-        <div class="diagram-wrapper">
-            <div class="fishbone-container">
-                <svg id="fishboneSvg" viewBox="0 0 1600 800" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <style>
-                            .bone-line { stroke: #000; stroke-linecap: round; fill: none; }
-                            .bone-label { font-size: 13px; font-weight: 600; fill: #000; }
-                            .cause-text { font-size: 11px; fill: #000; cursor: pointer; }
-                            .cause-text:hover { text-decoration: underline; }
-                            .main-bone-line { stroke-width: 4; }
-                            .sub-bone-line { stroke-width: 2; opacity: 0.7; }
-                            .category-label-rect { fill: rgba(255,255,255,0.9); stroke: #000; stroke-width: 1; }
-                        </style>
-                    </defs>
+        <div class="diagram-area">
+            <div class="svg-wrapper">
+                <svg id="fishboneSvg" viewBox="0 0 1800 800" xmlns="http://www.w3.org/2000/svg">
                 </svg>
             </div>
-            <button class="export-btn" onclick="exportDiagram()">Export PNG</button>
+            <button class="export-btn" onclick="exportDiagram()">↓ Export PNG</button>
         </div>
+        
+        <div class="control-panel">
+            <div class="control-row">
+                <label>Spine Segments:</label>
+                <button class="icon-btn" onclick="addSpineNode()">+</button>
+                <button class="icon-btn" onclick="removeSpineNode()">−</button>
+                <span id="spineCount">5</span>
+            </div>
+            <div class="control-row">
+                <label>Main Ribs:</label>
+                <button class="icon-btn" onclick="addRib()">+</button>
+                <button class="icon-btn" onclick="removeRib()">−</button>
+                <span id="ribCount">6</span>
+            </div>
+            <div class="control-row">
+                <button onclick="clearAll()">Clear All</button>
+                <button onclick="exportDiagram()">Export as PNG</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="dropdownMenu" class="dropdown-menu" style="display: none;">
+        <input type="text" id="dropdownInput" placeholder="Type or select...">
+        <div id="dropdownOptions"></div>
     </div>
     
     <script>
         const state = {
-            problem: 'Problem',
-            people: ['', '', ''],
-            methods: ['', '', ''],
-            materials: ['', '', ''],
-            machines: ['', '', ''],
-            measurement: ['', '', ''],
-            environment: ['', '', '']
+            problem: 'Problem Definition',
+            spineNodes: 5,
+            ribs: [
+                { label: 'Materials', items: ['Item 1', 'Item 2', 'Item 3'] },
+                { label: 'People', items: ['Item 1', 'Item 2'] },
+                { label: 'Equipment', items: ['Item 1', 'Item 2', 'Item 3'] },
+                { label: 'Processes', items: ['Item 1', 'Item 2'] },
+                { label: 'Environment', items: ['Item 1', 'Item 2', 'Item 3'] },
+                { label: 'Testing & Standards', items: ['Item 1', 'Item 2'] }
+            ]
         };
         
-        const categories = [
-            { key: 'people', label: 'People', position: 0.1, side: 'top' },
-            { key: 'methods', label: 'Methods', position: 0.25, side: 'bottom' },
-            { key: 'materials', label: 'Materials', position: 0.4, side: 'top' },
-            { key: 'machines', label: 'Machines', position: 0.55, side: 'bottom' },
-            { key: 'measurement', label: 'Measurement', position: 0.7, side: 'top' },
-            { key: 'environment', label: 'Environment', position: 0.85, side: 'bottom' }
-        ];
+        const commonOptions = {
+            'Materials': ['Raw material quality', 'Storage conditions', 'Supplier reliability', 'Contamination risk'],
+            'People': ['Training level', 'Experience', 'Availability', 'Skill gaps'],
+            'Equipment': ['Maintenance', 'Calibration', 'Age/Condition', 'Capacity'],
+            'Processes': ['Procedures', 'Documentation', 'Standards compliance', 'Efficiency'],
+            'Environment': ['Temperature', 'Humidity', 'Lighting', 'Contamination'],
+            'Testing & Standards': ['Test methods', 'Standards compliance', 'Measurement accuracy', 'Documentation']
+        };
         
-        let activeEditorId = null;
+        let activeDropdown = null;
         
-        function updateCauseText(category, index, value) {
-            state[category][index] = value;
+        function addSpineNode() {
+            if (state.spineNodes < 10) {
+                state.spineNodes++;
+                document.getElementById('spineCount').textContent = state.spineNodes;
+                draw();
+            }
+        }
+        
+        function removeSpineNode() {
+            if (state.spineNodes > 3) {
+                state.spineNodes--;
+                document.getElementById('spineCount').textContent = state.spineNodes;
+                draw();
+            }
+        }
+        
+        function addRib() {
+            state.ribs.push({ label: 'Category', items: ['Item 1', 'Item 2'] });
+            document.getElementById('ribCount').textContent = state.ribs.length;
             draw();
         }
         
-        function updateProblem(value) {
-            state.problem = value;
-            draw();
+        function removeRib() {
+            if (state.ribs.length > 1) {
+                state.ribs.pop();
+                document.getElementById('ribCount').textContent = state.ribs.length;
+                draw();
+            }
         }
         
-        function addCauseToCategory(category) {
-            state[category].push('');
-            draw();
+        function clearAll() {
+            if (confirm('Clear all data?')) {
+                state.problem = 'Problem Definition';
+                state.ribs.forEach(r => r.items = ['Item 1']);
+                draw();
+            }
         }
         
-        function removeCauseFromCategory(category, index) {
-            state[category].splice(index, 1);
-            draw();
-        }
-        
-        function makeTextEditable(category, index, textElement, currentValue) {
-            if (activeEditorId) return;
-            activeEditorId = category + '-' + index;
+        function showDropdown(ribIndex, itemIndex, x, y, currentValue) {
+            activeDropdown = { ribIndex, itemIndex, x, y };
             
-            const bbox = textElement.getBBox();
-            const svgRect = document.getElementById('fishboneSvg').getBoundingClientRect();
+            const menu = document.getElementById('dropdownMenu');
+            const input = document.getElementById('dropdownInput');
+            const options = document.getElementById('dropdownOptions');
             
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.className = 'text-editor';
             input.value = currentValue;
-            input.style.left = (svgRect.left + bbox.x) + 'px';
-            input.style.top = (svgRect.top + bbox.y - 10) + 'px';
-            input.style.width = Math.max(60, bbox.width + 10) + 'px';
+            const ribLabel = state.ribs[ribIndex].label;
+            const opts = commonOptions[ribLabel] || [];
             
-            input.onblur = function() {
-                const newValue = input.value.trim();
-                if (category === 'problem') {
-                    updateProblem(newValue);
-                } else {
-                    updateCauseText(category, index, newValue);
-                }
-                document.body.removeChild(input);
-                activeEditorId = null;
-            };
+            options.innerHTML = opts.map((opt, i) => 
+                `<div class="dropdown-item" onclick="selectOption('${opt}')">${opt}</div>`
+            ).join('');
             
-            input.onkeydown = function(e) {
-                if (e.key === 'Enter') input.blur();
-                if (e.key === 'Escape') {
-                    document.body.removeChild(input);
-                    activeEditorId = null;
-                }
-            };
-            
-            document.body.appendChild(input);
+            menu.style.display = 'block';
+            menu.style.left = x + 'px';
+            menu.style.top = y + 'px';
             input.focus();
-            input.setSelectionRange(input.value.length, input.value.length);
+            
+            input.onchange = input.onblur = function() {
+                selectOption(input.value);
+            };
+        }
+        
+        function selectOption(value) {
+            if (activeDropdown) {
+                const { ribIndex, itemIndex } = activeDropdown;
+                state.ribs[ribIndex].items[itemIndex] = value;
+                document.getElementById('dropdownMenu').style.display = 'none';
+                activeDropdown = null;
+                draw();
+            }
         }
         
         function draw() {
             const svg = document.getElementById('fishboneSvg');
-            const viewBox = svg.getAttribute('viewBox').split(' ');
-            const width = parseFloat(viewBox[2]);
-            const height = parseFloat(viewBox[3]);
-            
+            const width = 1800, height = 800;
             const centerY = height / 2;
-            const spineStartX = 80;
-            const spineEndX = 1450;
+            const spineStartX = 100;
+            const spineEndX = 1650;
+            const spineLength = spineEndX - spineStartX;
             
-            let svgContent = '';
+            let content = '';
             
-            svgContent += '<line x1="' + spineStartX + '" y1="' + centerY + '" x2="' + spineEndX + '" y2="' + centerY + '" class="bone-line main-bone-line"/>';
+            // Spine (main horizontal line)
+            content += `<line x1="${spineStartX}" y1="${centerY}" x2="${spineEndX}" y2="${centerY}" stroke="#333" stroke-width="3"/>`;
             
-            svgContent += '<polygon points="' + spineStartX + ',' + centerY + ' ' + (spineStartX-40) + ',' + (centerY-25) + ' ' + (spineStartX-40) + ',' + (centerY+25) + '" fill="#000"/>';
+            // Spine nodes (circles) - evenly spaced
+            const nodePositions = [];
+            for (let i = 0; i < state.spineNodes; i++) {
+                const x = spineStartX + (spineLength / (state.spineNodes - 1)) * i;
+                nodePositions.push(x);
+                content += `<circle cx="${x}" cy="${centerY}" r="8" fill="#0066cc" stroke="white" stroke-width="2"/>`;
+            }
             
-            svgContent += '<text x="' + (spineStartX - 50) + '" y="' + centerY + '" font-size="13" font-weight="700" text-anchor="end" dominant-baseline="middle" fill="#000" style="cursor: pointer;" onclick="makeTextEditable(\'problem\', 0, this, state.problem)">' + state.problem + '</text>';
+            // Fish head (right side)
+            content += `<polygon points="${spineEndX + 50},${centerY} ${spineEndX + 100},${centerY - 60} ${spineEndX + 100},${centerY + 60}" fill="#1a3a52" stroke="#000" stroke-width="2"/>`;
             
-            categories.forEach(function(cat) {
-                const boneX = spineStartX + (spineEndX - spineStartX) * cat.position;
-                const isTop = cat.side === 'top';
-                const angle = isTop ? -35 : 35;
+            // Tail (left side)
+            content += `<polygon points="${spineStartX},${centerY} ${spineStartX - 60},${centerY - 40} ${spineStartX - 60},${centerY + 40}" fill="#1a3a52" stroke="#000" stroke-width="2"/>`;
+            
+            // Problem label
+            content += `<text x="${spineEndX + 80}" y="${centerY - 90}" font-size="16" font-weight="700" fill="#000">${state.problem}</text>`;
+            
+            // Ribs (curved bones)
+            const ribCount = state.ribs.length;
+            const angleSpan = 160; // degrees spread
+            const startAngle = -angleSpan / 2;
+            
+            state.ribs.forEach((rib, ribIdx) => {
+                const angle = startAngle + (ribIdx / (ribCount - 1)) * angleSpan;
+                const isTop = angle < 0;
+                
+                // Determine which spine node this rib attaches to
+                const spineNodeIdx = Math.round((ribIdx / (ribCount - 1)) * (state.spineNodes - 1));
+                const ribStartX = nodePositions[spineNodeIdx];
+                
+                const ribLength = 200;
                 const rad = angle * Math.PI / 180;
-                const boneLength = 140;
-                const endX = boneX + boneLength * Math.cos(rad);
-                const endY = centerY + boneLength * Math.sin(rad);
                 
-                svgContent += '<line x1="' + boneX + '" y1="' + centerY + '" x2="' + endX + '" y2="' + endY + '" class="bone-line main-bone-line"/>';
+                // Rib endpoint
+                const ribEndX = ribStartX + ribLength * Math.cos(rad);
+                const ribEndY = centerY + ribLength * Math.sin(rad);
                 
-                const labelRad = (angle * Math.PI / 180);
-                const labelDist = 70;
-                const labelX = boneX + labelDist * Math.cos(labelRad);
+                // Curved arc path
+                const controlX = ribStartX + (ribLength * 0.7) * Math.cos(rad + Math.PI / 6);
+                const controlY = centerY + (ribLength * 0.7) * Math.sin(rad + Math.PI / 6);
+                
+                content += `<path d="M ${ribStartX} ${centerY} Q ${controlX} ${controlY} ${ribEndX} ${ribEndY}" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+                
+                // Category label at rib start
+                const labelDist = 40;
+                const labelRad = rad;
+                const labelX = ribStartX + labelDist * Math.cos(labelRad);
                 const labelY = centerY + labelDist * Math.sin(labelRad);
                 
-                svgContent += '<rect x="' + (labelX - 30) + '" y="' + (labelY - 12) + '" width="60" height="24" rx="4" class="category-label-rect"/>';
-                svgContent += '<text x="' + labelX + '" y="' + labelY + '" font-size="12" font-weight="700" text-anchor="middle" dominant-baseline="middle" fill="#000">' + cat.label + '</text>';
+                content += `<text x="${labelX}" y="${labelY}" font-size="12" font-weight="700" text-anchor="middle" fill="#0066cc">${rib.label}</text>`;
                 
-                const causes = state[cat.key];
-                const angleSpan = 50;
-                const anglePerCause = causes.length > 1 ? angleSpan / (causes.length - 1) : 0;
-                
-                causes.forEach(function(cause, idx) {
-                    const offset = causes.length > 1 ? (idx - causes.length / 2 + 0.5) * anglePerCause : 0;
-                    const subAngle = angle + offset;
-                    const subRad = subAngle * Math.PI / 180;
-                    const subLength = 70;
-                    const subEndX = endX + subLength * Math.cos(subRad);
-                    const subEndY = endY + subLength * Math.sin(subRad);
+                // Sub-items (branches off the rib)
+                rib.items.forEach((item, itemIdx) => {
+                    const itemOffset = (itemIdx - (rib.items.length - 1) / 2) * 25;
+                    const itemRad = (angle + itemOffset) * Math.PI / 180;
                     
-                    svgContent += '<line x1="' + endX + '" y1="' + endY + '" x2="' + subEndX + '" y2="' + subEndY + '" class="bone-line sub-bone-line"/>';
+                    const branchLen = 80;
+                    const branchStartX = ribEndX;
+                    const branchStartY = ribEndY;
+                    const branchEndX = branchStartX + branchLen * Math.cos(itemRad);
+                    const branchEndY = branchStartY + branchLen * Math.sin(itemRad);
                     
-                    const displayText = cause || '(empty)';
-                    const textId = 'text-' + cat.key + '-' + idx;
-                    svgContent += '<text id="' + textId + '" x="' + subEndX + '" y="' + subEndY + '" class="cause-text" text-anchor="middle" dominant-baseline="middle" onclick="makeTextEditable(\'' + cat.key + '\', ' + idx + ', this, \'' + cause + '\')">' + displayText + '</text>';
+                    // Branch line
+                    content += `<line x1="${branchStartX}" y1="${branchStartY}" x2="${branchEndX}" y2="${branchEndY}" stroke="#666" stroke-width="1" opacity="0.7"/>`;
+                    
+                    // Item circle (clickable)
+                    content += `<circle cx="${branchEndX}" cy="${branchEndY}" r="6" fill="#00cc00" stroke="white" stroke-width="1.5" style="cursor: pointer;" onclick="showDropdown(${ribIdx}, ${itemIdx}, ${branchEndX - 90}, ${branchEndY + 10}, '${item}')"/>`;
+                    
+                    // Item label
+                    content += `<text x="${branchEndX + 20}" y="${branchEndY}" font-size="11" fill="#333">${item}</text>`;
                 });
             });
             
-            svg.innerHTML = svgContent;
-            
-            categories.forEach(function(cat) {
-                const boneX = spineStartX + (spineEndX - spineStartX) * cat.position;
-                const isTop = cat.side === 'top';
-                const angle = isTop ? -35 : 35;
-                const rad = angle * Math.PI / 180;
-                const boneLength = 140;
-                const endX = boneX + boneLength * Math.cos(rad);
-                const endY = centerY + boneLength * Math.sin(rad);
-                
-                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-                g.style.cursor = 'pointer';
-                
-                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                circle.setAttribute('cx', endX);
-                circle.setAttribute('cy', endY);
-                circle.setAttribute('r', '14');
-                circle.setAttribute('fill', '#333');
-                circle.setAttribute('opacity', '0');
-                circle.style.cursor = 'pointer';
-                circle.onclick = function(e) {
-                    e.stopPropagation();
-                    addCauseToCategory(cat.key);
-                };
-                
-                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                text.setAttribute('x', endX);
-                text.setAttribute('y', endY);
-                text.setAttribute('text-anchor', 'middle');
-                text.setAttribute('dominant-baseline', 'middle');
-                text.setAttribute('font-size', '16');
-                text.setAttribute('font-weight', 'bold');
-                text.setAttribute('fill', '#333');
-                text.setAttribute('opacity', '0');
-                text.setAttribute('pointer-events', 'none');
-                text.textContent = '+';
-                
-                circle.onmouseenter = function() {
-                    circle.setAttribute('opacity', '0.8');
-                    text.setAttribute('opacity', '1');
-                };
-                
-                circle.onmouseleave = function() {
-                    circle.setAttribute('opacity', '0');
-                    text.setAttribute('opacity', '0');
-                };
-                
-                g.appendChild(circle);
-                g.appendChild(text);
-                svg.appendChild(g);
-            });
+            svg.innerHTML = content;
         }
         
         function exportDiagram() {
@@ -327,30 +261,30 @@
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             
-            const bbox = svg.getBBox();
-            canvas.width = bbox.width + 40;
-            canvas.height = bbox.height + 40;
-            
-            ctx.fillStyle = '#ffffff';
+            canvas.width = 1800;
+            canvas.height = 800;
+            ctx.fillStyle = 'white';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
             const svgData = new XMLSerializer().serializeToString(svg);
             const img = new Image();
-            
-            img.onload = function() {
-                ctx.drawImage(img, 20, 20);
-                
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0);
                 const link = document.createElement('a');
                 link.href = canvas.toDataURL('image/png');
-                link.download = 'fishbone-diagram.png';
+                link.download = 'fishbone.png';
                 link.click();
             };
-            
             img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
         }
         
         draw();
         window.addEventListener('resize', draw);
+        document.addEventListener('click', (e) => {
+            if (e.target.id !== 'dropdownInput' && !e.target.classList.contains('dropdown-item')) {
+                document.getElementById('dropdownMenu').style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
