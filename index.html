@@ -7,113 +7,172 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f9fa; }
-        .container { max-width: 100%; padding: 20px; }
-        .header { text-align: center; margin-bottom: 30px; }
-        h1 { font-size: 28px; margin-bottom: 8px; }
-        .subtitle { color: #666; font-size: 14px; }
-        .diagram-area { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 40px; position: relative; }
-        .svg-wrapper { position: relative; display: inline-block; width: 100%; }
-        svg { border: 1px solid #eee; display: block; margin: 0 auto; max-width: 100%; background: white; }
-        .control-panel { margin-top: 30px; padding: 20px; background: #f5f5f5; border-radius: 6px; }
-        .control-row { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; }
-        .control-row label { font-weight: 600; min-width: 120px; }
-        button { padding: 8px 16px; background: #333; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        .wrapper { padding: 40px; max-width: 1600px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 40px; }
+        h1 { font-size: 32px; margin-bottom: 8px; font-weight: 700; }
+        .subtitle { color: #999; font-size: 13px; }
+        .diagram-container { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 40px 60px; min-height: 700px; position: relative; }
+        svg { display: block; width: 100%; height: auto; background: white; }
+        .controls { margin-top: 40px; display: flex; gap: 20px; flex-wrap: wrap; padding: 20px; background: #f5f5f5; border-radius: 6px; }
+        .control-group { display: flex; align-items: center; gap: 8px; }
+        label { font-size: 13px; font-weight: 600; color: #333; }
+        button { padding: 6px 12px; background: #333; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 12px; transition: background 0.2s; }
         button:hover { background: #000; }
-        button.icon-btn { padding: 6px 10px; font-size: 16px; min-width: 40px; }
-        .dropdown-menu { position: absolute; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 1000; min-width: 180px; }
-        .dropdown-menu input { width: 100%; padding: 8px 10px; border: none; border-bottom: 1px solid #eee; font-size: 12px; }
-        .dropdown-menu input:focus { outline: none; }
-        .dropdown-item { padding: 8px 12px; font-size: 12px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
-        .dropdown-item:hover { background: #f5f5f5; }
-        .dropdown-item:last-child { border-bottom: none; }
-        .export-btn { position: absolute; bottom: 20px; right: 20px; }
+        .export { margin-top: 20px; }
+        .export button { padding: 10px 20px; font-size: 13px; }
+        .item-badge { cursor: pointer; transition: opacity 0.2s; }
+        .item-badge:hover { opacity: 0.8; }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="wrapper">
         <div class="header">
             <h1>Fishbone Diagram</h1>
-            <p class="subtitle">Interactive cause-and-effect analysis</p>
+            <p class="subtitle">Interactive cause-and-effect analysis diagram</p>
         </div>
         
-        <div class="diagram-area">
-            <div class="svg-wrapper">
-                <svg id="fishboneSvg" viewBox="0 0 1800 800" xmlns="http://www.w3.org/2000/svg">
-                </svg>
-            </div>
-            <button class="export-btn" onclick="exportDiagram()">↓ Export PNG</button>
+        <div class="diagram-container">
+            <svg id="fishbone" viewBox="0 0 2000 700" xmlns="http://www.w3.org/2000/svg"></svg>
         </div>
         
-        <div class="control-panel">
-            <div class="control-row">
-                <label>Spine Segments:</label>
-                <button class="icon-btn" onclick="addSpineNode()">+</button>
-                <button class="icon-btn" onclick="removeSpineNode()">−</button>
-                <span id="spineCount">5</span>
-            </div>
-            <div class="control-row">
-                <label>Main Ribs:</label>
-                <button class="icon-btn" onclick="addRib()">+</button>
-                <button class="icon-btn" onclick="removeRib()">−</button>
+        <div class="controls">
+            <div class="control-group">
+                <label>Ribs:</label>
+                <button onclick="addRib()">+ Add</button>
+                <button onclick="removeRib()">− Remove</button>
                 <span id="ribCount">6</span>
             </div>
-            <div class="control-row">
-                <button onclick="clearAll()">Clear All</button>
-                <button onclick="exportDiagram()">Export as PNG</button>
+            <div class="control-group">
+                <label>Items per rib:</label>
+                <button onclick="addItemPerRib()">+ More</button>
+                <button onclick="removeItemPerRib()">− Fewer</button>
+            </div>
+            <div class="control-group">
+                <label>Problem:</label>
+                <input id="problemInput" type="text" value="Problem Definition" style="padding: 6px 10px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; width: 200px;">
             </div>
         </div>
-    </div>
-    
-    <div id="dropdownMenu" class="dropdown-menu" style="display: none;">
-        <input type="text" id="dropdownInput" placeholder="Type or select...">
-        <div id="dropdownOptions"></div>
+        
+        <div class="export">
+            <button onclick="exportDiagram()">↓ Export as PNG</button>
+        </div>
     </div>
     
     <script>
         const state = {
             problem: 'Problem Definition',
-            spineNodes: 5,
             ribs: [
-                { label: 'Materials', items: ['Item 1', 'Item 2', 'Item 3'] },
-                { label: 'People', items: ['Item 1', 'Item 2'] },
-                { label: 'Equipment', items: ['Item 1', 'Item 2', 'Item 3'] },
-                { label: 'Processes', items: ['Item 1', 'Item 2'] },
-                { label: 'Environment', items: ['Item 1', 'Item 2', 'Item 3'] },
-                { label: 'Testing & Standards', items: ['Item 1', 'Item 2'] }
+                { label: 'Materials', items: ['Raw materials', 'Storage', 'Quality', ''] },
+                { label: 'People', items: ['Training', 'Experience', 'Awareness', ''] },
+                { label: 'Equipment', items: ['Maintenance', 'Calibration', 'Efficiency', ''] },
+                { label: 'Processes', items: ['Procedures', 'Documentation', 'Compliance', ''] },
+                { label: 'Environment', items: ['Temperature', 'Humidity', 'Safety', ''] },
+                { label: 'Testing & Standards', items: ['Methods', 'Accuracy', 'Records', ''] }
             ]
         };
         
-        const commonOptions = {
-            'Materials': ['Raw material quality', 'Storage conditions', 'Supplier reliability', 'Contamination risk'],
-            'People': ['Training level', 'Experience', 'Availability', 'Skill gaps'],
-            'Equipment': ['Maintenance', 'Calibration', 'Age/Condition', 'Capacity'],
-            'Processes': ['Procedures', 'Documentation', 'Standards compliance', 'Efficiency'],
-            'Environment': ['Temperature', 'Humidity', 'Lighting', 'Contamination'],
-            'Testing & Standards': ['Test methods', 'Standards compliance', 'Measurement accuracy', 'Documentation']
-        };
+        const colors = ['#FF6B9D', '#7B68EE', '#00CED1', '#FFD700', '#FF8C00', '#20B2AA', '#FF69B4', '#1E90FF', '#FF4500', '#32CD32'];
         
-        let activeDropdown = null;
-        
-        function addSpineNode() {
-            if (state.spineNodes < 10) {
-                state.spineNodes++;
-                document.getElementById('spineCount').textContent = state.spineNodes;
-                draw();
-            }
-        }
-        
-        function removeSpineNode() {
-            if (state.spineNodes > 3) {
-                state.spineNodes--;
-                document.getElementById('spineCount').textContent = state.spineNodes;
-                draw();
-            }
+        function draw() {
+            const svg = document.getElementById('fishbone');
+            const w = 2000, h = 700;
+            const centerY = h / 2;
+            const headX = 1850;
+            const tailX = 80;
+            
+            let html = '';
+            
+            // Background
+            html += `<rect width="${w}" height="${h}" fill="white"/>`;
+            
+            // Spine (horizontal line)
+            html += `<line x1="${tailX}" y1="${centerY}" x2="${headX}" y2="${centerY}" stroke="#333" stroke-width="4" stroke-linecap="round"/>`;
+            
+            // Tail (left)
+            html += `<polygon points="${tailX},${centerY} ${tailX - 50},${centerY - 35} ${tailX - 50},${centerY + 35}" fill="#1a2332" stroke="#000" stroke-width="2"/>`;
+            
+            // Head (right)
+            html += `<polygon points="${headX},${centerY} ${headX + 60},${centerY - 45} ${headX + 60},${centerY + 45}" fill="#1a2332" stroke="#000" stroke-width="2"/>`;
+            
+            // Problem label
+            html += `<g onclick="editProblem()">
+                <rect x="${headX + 15}" y="${centerY - 65}" width="120" height="50" rx="8" fill="#f0f0f0" stroke="#999" stroke-width="1"/>
+                <text x="${headX + 75}" y="${centerY - 35}" font-size="14" font-weight="700" text-anchor="middle" fill="#000">${state.problem}</text>
+                <style>.problem-label { cursor: pointer; }</style>
+            </g>`;
+            
+            // Ribs
+            const ribCount = state.ribs.length;
+            const totalSpan = 160; // degrees
+            const startAngle = -totalSpan / 2;
+            
+            state.ribs.forEach((rib, ribIdx) => {
+                const angle = startAngle + (ribIdx / (ribCount - 1)) * totalSpan;
+                const rad = angle * Math.PI / 180;
+                
+                // Rib start (on spine)
+                const ribStartX = tailX + (headX - tailX) * (0.1 + ribIdx / ribCount * 0.7);
+                const ribStartY = centerY;
+                
+                // Rib end
+                const ribLen = 220;
+                const ribEndX = ribStartX + ribLen * Math.cos(rad);
+                const ribEndY = ribStartY + ribLen * Math.sin(rad);
+                
+                // Control point for curve
+                const cx = ribStartX + ribLen * 0.6 * Math.cos(rad);
+                const cy = ribStartY + ribLen * 0.6 * Math.sin(rad);
+                
+                // Draw curved rib
+                html += `<path d="M ${ribStartX} ${ribStartY} Q ${cx} ${cy} ${ribEndX} ${ribEndY}" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+                
+                // Category label on spine
+                const labelDist = 50;
+                const labelRad = rad;
+                const labelX = ribStartX + labelDist * Math.cos(labelRad);
+                const labelY = ribStartY + labelDist * Math.sin(labelRad) - 15;
+                
+                html += `<text x="${labelX}" y="${labelY}" font-size="13" font-weight="700" text-anchor="middle" fill="#0066cc">${rib.label}</text>`;
+                
+                // Sub-items (branches off the rib)
+                const itemCount = rib.items.filter(i => i.trim()).length;
+                const itemSpread = 50;
+                
+                rib.items.forEach((item, itemIdx) => {
+                    if (!item.trim()) return;
+                    
+                    const itemOffset = itemSpread * (itemIdx - itemCount / 2 + 0.5) / itemCount;
+                    const itemRad = (angle + itemOffset) * Math.PI / 180;
+                    
+                    // Branch off rib
+                    const branchLen = 80;
+                    const branchX = ribEndX + branchLen * Math.cos(itemRad);
+                    const branchY = ribEndY + branchLen * Math.sin(itemRad);
+                    
+                    // Branch line
+                    html += `<line x1="${ribEndX}" y1="${ribEndY}" x2="${branchX}" y2="${branchY}" stroke="#999" stroke-width="1" opacity="0.6"/>`;
+                    
+                    // Item badge (colored circle with text)
+                    const color = colors[itemIdx % colors.length];
+                    const textLen = item.length;
+                    const boxW = Math.max(50, textLen * 6 + 16);
+                    
+                    html += `<g class="item-badge" onclick="editItem(${ribIdx}, ${itemIdx})" style="cursor: pointer;">
+                        <circle cx="${branchX}" cy="${branchY}" r="22" fill="${color}" stroke="white" stroke-width="2" opacity="0.85"/>
+                        <text x="${branchX}" y="${branchY + 6}" font-size="11" font-weight="600" text-anchor="middle" fill="white" pointer-events="none">${item}</text>
+                    </g>`;
+                });
+            });
+            
+            svg.innerHTML = html;
         }
         
         function addRib() {
-            state.ribs.push({ label: 'Category', items: ['Item 1', 'Item 2'] });
-            document.getElementById('ribCount').textContent = state.ribs.length;
-            draw();
+            if (state.ribs.length < 10) {
+                state.ribs.push({ label: `Category ${state.ribs.length + 1}`, items: ['Item 1', 'Item 2', ''] });
+                document.getElementById('ribCount').textContent = state.ribs.length;
+                draw();
+            }
         }
         
         function removeRib() {
@@ -124,167 +183,64 @@
             }
         }
         
-        function clearAll() {
-            if (confirm('Clear all data?')) {
-                state.problem = 'Problem Definition';
-                state.ribs.forEach(r => r.items = ['Item 1']);
-                draw();
-            }
-        }
-        
-        function showDropdown(ribIndex, itemIndex, x, y, currentValue) {
-            activeDropdown = { ribIndex, itemIndex, x, y };
-            
-            const menu = document.getElementById('dropdownMenu');
-            const input = document.getElementById('dropdownInput');
-            const options = document.getElementById('dropdownOptions');
-            
-            input.value = currentValue;
-            const ribLabel = state.ribs[ribIndex].label;
-            const opts = commonOptions[ribLabel] || [];
-            
-            options.innerHTML = opts.map((opt, i) => 
-                `<div class="dropdown-item" onclick="selectOption('${opt}')">${opt}</div>`
-            ).join('');
-            
-            menu.style.display = 'block';
-            menu.style.left = x + 'px';
-            menu.style.top = y + 'px';
-            input.focus();
-            
-            input.onchange = input.onblur = function() {
-                selectOption(input.value);
-            };
-        }
-        
-        function selectOption(value) {
-            if (activeDropdown) {
-                const { ribIndex, itemIndex } = activeDropdown;
-                state.ribs[ribIndex].items[itemIndex] = value;
-                document.getElementById('dropdownMenu').style.display = 'none';
-                activeDropdown = null;
-                draw();
-            }
-        }
-        
-        function draw() {
-            const svg = document.getElementById('fishboneSvg');
-            const width = 1800, height = 800;
-            const centerY = height / 2;
-            const spineStartX = 100;
-            const spineEndX = 1650;
-            const spineLength = spineEndX - spineStartX;
-            
-            let content = '';
-            
-            // Spine (main horizontal line)
-            content += `<line x1="${spineStartX}" y1="${centerY}" x2="${spineEndX}" y2="${centerY}" stroke="#333" stroke-width="3"/>`;
-            
-            // Spine nodes (circles) - evenly spaced
-            const nodePositions = [];
-            for (let i = 0; i < state.spineNodes; i++) {
-                const x = spineStartX + (spineLength / (state.spineNodes - 1)) * i;
-                nodePositions.push(x);
-                content += `<circle cx="${x}" cy="${centerY}" r="8" fill="#0066cc" stroke="white" stroke-width="2"/>`;
-            }
-            
-            // Fish head (right side)
-            content += `<polygon points="${spineEndX + 50},${centerY} ${spineEndX + 100},${centerY - 60} ${spineEndX + 100},${centerY + 60}" fill="#1a3a52" stroke="#000" stroke-width="2"/>`;
-            
-            // Tail (left side)
-            content += `<polygon points="${spineStartX},${centerY} ${spineStartX - 60},${centerY - 40} ${spineStartX - 60},${centerY + 40}" fill="#1a3a52" stroke="#000" stroke-width="2"/>`;
-            
-            // Problem label
-            content += `<text x="${spineEndX + 80}" y="${centerY - 90}" font-size="16" font-weight="700" fill="#000">${state.problem}</text>`;
-            
-            // Ribs (curved bones)
-            const ribCount = state.ribs.length;
-            const angleSpan = 160; // degrees spread
-            const startAngle = -angleSpan / 2;
-            
-            state.ribs.forEach((rib, ribIdx) => {
-                const angle = startAngle + (ribIdx / (ribCount - 1)) * angleSpan;
-                const isTop = angle < 0;
-                
-                // Determine which spine node this rib attaches to
-                const spineNodeIdx = Math.round((ribIdx / (ribCount - 1)) * (state.spineNodes - 1));
-                const ribStartX = nodePositions[spineNodeIdx];
-                
-                const ribLength = 200;
-                const rad = angle * Math.PI / 180;
-                
-                // Rib endpoint
-                const ribEndX = ribStartX + ribLength * Math.cos(rad);
-                const ribEndY = centerY + ribLength * Math.sin(rad);
-                
-                // Curved arc path
-                const controlX = ribStartX + (ribLength * 0.7) * Math.cos(rad + Math.PI / 6);
-                const controlY = centerY + (ribLength * 0.7) * Math.sin(rad + Math.PI / 6);
-                
-                content += `<path d="M ${ribStartX} ${centerY} Q ${controlX} ${controlY} ${ribEndX} ${ribEndY}" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
-                
-                // Category label at rib start
-                const labelDist = 40;
-                const labelRad = rad;
-                const labelX = ribStartX + labelDist * Math.cos(labelRad);
-                const labelY = centerY + labelDist * Math.sin(labelRad);
-                
-                content += `<text x="${labelX}" y="${labelY}" font-size="12" font-weight="700" text-anchor="middle" fill="#0066cc">${rib.label}</text>`;
-                
-                // Sub-items (branches off the rib)
-                rib.items.forEach((item, itemIdx) => {
-                    const itemOffset = (itemIdx - (rib.items.length - 1) / 2) * 25;
-                    const itemRad = (angle + itemOffset) * Math.PI / 180;
-                    
-                    const branchLen = 80;
-                    const branchStartX = ribEndX;
-                    const branchStartY = ribEndY;
-                    const branchEndX = branchStartX + branchLen * Math.cos(itemRad);
-                    const branchEndY = branchStartY + branchLen * Math.sin(itemRad);
-                    
-                    // Branch line
-                    content += `<line x1="${branchStartX}" y1="${branchStartY}" x2="${branchEndX}" y2="${branchEndY}" stroke="#666" stroke-width="1" opacity="0.7"/>`;
-                    
-                    // Item circle (clickable)
-                    content += `<circle cx="${branchEndX}" cy="${branchEndY}" r="6" fill="#00cc00" stroke="white" stroke-width="1.5" style="cursor: pointer;" onclick="showDropdown(${ribIdx}, ${itemIdx}, ${branchEndX - 90}, ${branchEndY + 10}, '${item}')"/>`;
-                    
-                    // Item label
-                    content += `<text x="${branchEndX + 20}" y="${branchEndY}" font-size="11" fill="#333">${item}</text>`;
-                });
+        function addItemPerRib() {
+            state.ribs.forEach(rib => {
+                if (rib.items.length < 6) rib.items.push('');
             });
-            
-            svg.innerHTML = content;
+            draw();
+        }
+        
+        function removeItemPerRib() {
+            state.ribs.forEach(rib => {
+                if (rib.items.length > 1) rib.items.pop();
+            });
+            draw();
+        }
+        
+        function editProblem() {
+            const val = prompt('Enter problem:', state.problem);
+            if (val !== null) {
+                state.problem = val || 'Problem';
+                document.getElementById('problemInput').value = state.problem;
+                draw();
+            }
+        }
+        
+        function editItem(ribIdx, itemIdx) {
+            const val = prompt('Enter item:', state.ribs[ribIdx].items[itemIdx]);
+            if (val !== null) {
+                state.ribs[ribIdx].items[itemIdx] = val;
+                draw();
+            }
         }
         
         function exportDiagram() {
-            const svg = document.getElementById('fishboneSvg');
+            const svg = document.getElementById('fishbone');
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             
-            canvas.width = 1800;
-            canvas.height = 800;
+            canvas.width = 2000;
+            canvas.height = 700;
             ctx.fillStyle = 'white';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            const svgData = new XMLSerializer().serializeToString(svg);
             const img = new Image();
             img.onload = () => {
                 ctx.drawImage(img, 0, 0);
-                const link = document.createElement('a');
-                link.href = canvas.toDataURL('image/png');
-                link.download = 'fishbone.png';
-                link.click();
+                const a = document.createElement('a');
+                a.href = canvas.toDataURL('image/png');
+                a.download = 'fishbone.png';
+                a.click();
             };
-            img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+            img.src = 'data:image/svg+xml;base64,' + btoa(new XMLSerializer().serializeToString(svg));
         }
         
-        draw();
-        window.addEventListener('resize', draw);
-        document.addEventListener('click', (e) => {
-            if (e.target.id !== 'dropdownInput' && !e.target.classList.contains('dropdown-item')) {
-                document.getElementById('dropdownMenu').style.display = 'none';
-            }
+        document.getElementById('problemInput').addEventListener('change', (e) => {
+            state.problem = e.target.value || 'Problem';
+            draw();
         });
+        
+        draw();
     </script>
 </body>
 </html>
