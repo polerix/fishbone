@@ -13,255 +13,94 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
-            background: #0b0f19;
-            color: #e8eef2;
-            padding: 40px 20px;
+            background: #f5f5f5;
+            color: #333;
+            padding: 20px;
         }
         
         .container {
-            max-width: 1800px;
+            max-width: 100%;
             margin: 0 auto;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         
         .header {
-            margin-bottom: 40px;
             text-align: center;
+            margin-bottom: 20px;
         }
         
         h1 {
-            font-size: 32px;
-            margin-bottom: 8px;
+            font-size: 24px;
+            margin-bottom: 4px;
             font-weight: 600;
-            letter-spacing: -0.5px;
-        }
-        
-        .subtitle {
-            font-size: 14px;
-            color: #8a94a6;
-            font-weight: 400;
-        }
-        
-        .content {
-            display: flex;
-            gap: 32px;
-            align-items: flex-start;
-        }
-        
-        .input-panel {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 8px;
-            padding: 32px;
-            min-width: 280px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        
-        .problem-section {
-            margin-bottom: 32px;
-        }
-        
-        .problem-input {
-            width: 100%;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 6px;
-            padding: 12px 14px;
-            font-size: 14px;
-            color: #e8eef2;
-            font-family: inherit;
-            transition: all 0.2s ease;
-        }
-        
-        .problem-input::placeholder {
-            color: #5a6478;
-        }
-        
-        .problem-input:focus {
-            outline: none;
-            border-color: rgba(255,255,255,0.24);
-            background: rgba(255,255,255,0.06);
-        }
-        
-        .causes-section {
-            margin-bottom: 24px;
-        }
-        
-        .cause-category {
-            margin-bottom: 24px;
-        }
-        
-        .category-label {
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: #7dd3fc;
-            margin-bottom: 12px;
-        }
-        
-        .cause-items {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-        
-        .cause-item {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-        
-        .cause-input {
-            flex: 1;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 4px;
-            padding: 8px 10px;
-            font-size: 13px;
-            color: #e8eef2;
-            font-family: inherit;
-            transition: all 0.2s ease;
-        }
-        
-        .cause-input::placeholder {
-            color: #5a6478;
-        }
-        
-        .cause-input:focus {
-            outline: none;
-            border-color: rgba(255,255,255,0.24);
-            background: rgba(255,255,255,0.06);
-        }
-        
-        .icon-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 4px;
-            border: none;
-            background: rgba(255,255,255,0.08);
-            color: #e8eef2;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            padding: 0;
-            flex-shrink: 0;
-        }
-        
-        .icon-btn:hover {
-            background: rgba(255,255,255,0.16);
-            color: #7dd3fc;
-        }
-        
-        .icon-btn.delete {
-            color: #ff6b6b;
-        }
-        
-        .icon-btn.delete:hover {
-            background: rgba(255,107,107,0.2);
-        }
-        
-        .add-cause-btn {
-            font-size: 12px;
-            font-weight: 500;
-            padding: 6px 12px;
-            background: rgba(125,211,252,0.1);
-            color: #7dd3fc;
-            border: 1px solid rgba(125,211,252,0.3);
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .add-cause-btn:hover {
-            background: rgba(125,211,252,0.2);
-            border-color: rgba(125,211,252,0.6);
         }
         
         .diagram-wrapper {
             position: relative;
-            background: #7fffd4;
-            border: 1px solid rgba(0,0,0,0.1);
-            border-radius: 8px;
-            padding: 40px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex: 1;
-            min-height: 600px;
+            overflow: auto;
         }
         
         .fishbone-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 100%;
             height: 100%;
         }
         
         svg {
-            max-width: 100%;
+            max-width: 80vw;
+            max-height: 80vh;
             height: auto;
+            width: auto;
         }
         
         .export-btn {
             position: absolute;
-            bottom: 24px;
-            right: 24px;
-            padding: 10px 20px;
-            background: rgba(125,211,252,0.1);
-            color: #7dd3fc;
-            border: 1px solid rgba(125,211,252,0.3);
-            border-radius: 6px;
+            bottom: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             transition: all 0.2s ease;
         }
         
         .export-btn:hover {
-            background: rgba(125,211,252,0.2);
-            border-color: rgba(125,211,252,0.6);
+            background: #000;
         }
         
-        .fill-status {
-            text-align: center;
-            margin-top: 16px;
+        .text-editor {
+            position: absolute;
+            background: white;
+            border: 2px solid #333;
+            border-radius: 2px;
+            padding: 2px 4px;
             font-size: 12px;
-            color: #8a94a6;
+            font-family: inherit;
+            color: #000;
+            z-index: 100;
+            min-width: 60px;
+            max-width: 200px;
         }
         
-        @keyframes wobble {
-            0% {
-                transform: translateX(0) rotateZ(0deg);
-            }
-            25% {
-                transform: translateX(8px) rotateZ(1.5deg);
-            }
-            50% {
-                transform: translateX(-6px) rotateZ(-1.2deg);
-            }
-            75% {
-                transform: translateX(5px) rotateZ(0.8deg);
-            }
-            100% {
-                transform: translateX(0) rotateZ(0deg);
-            }
-        }
-        
-        .fishbone-container.wobble-active {
-            animation: wobble 0.6s ease-in-out;
-        }
-        
-        @media (max-width: 1200px) {
-            .content {
-                flex-direction: column;
-            }
-            
-            .input-panel {
-                min-width: auto;
-            }
+        .text-editor:focus {
+            outline: none;
+            border-color: #0066cc;
         }
     </style>
 </head>
@@ -269,113 +108,53 @@
     <div class="container">
         <div class="header">
             <h1>Fishbone Diagram</h1>
-            <p class="subtitle">Identify root causes systematically</p>
         </div>
         
-        <div class="content">
-            <div class="input-panel">
-                <div class="problem-section">
-                    <input 
-                        type="text" 
-                        id="problemInput" 
-                        class="problem-input"
-                        placeholder="Enter the main problem or effect"
-                        oninput="updateProblem(this.value); updateCompletion()"
-                    >
-                </div>
-                
-                <div class="causes-section">
-                    <div class="cause-category">
-                        <label class="category-label">People</label>
-                        <div class="cause-items" id="peopleCauses"></div>
-                        <button class="add-cause-btn" onclick="addCause('people')">+ Add cause</button>
-                    </div>
-                    
-                    <div class="cause-category">
-                        <label class="category-label">Methods</label>
-                        <div class="cause-items" id="methodsCauses"></div>
-                        <button class="add-cause-btn" onclick="addCause('methods')">+ Add cause</button>
-                    </div>
-                    
-                    <div class="cause-category">
-                        <label class="category-label">Materials</label>
-                        <div class="cause-items" id="materialsCauses"></div>
-                        <button class="add-cause-btn" onclick="addCause('materials')">+ Add cause</button>
-                    </div>
-                    
-                    <div class="cause-category">
-                        <label class="category-label">Machines</label>
-                        <div class="cause-items" id="machinesCauses"></div>
-                        <button class="add-cause-btn" onclick="addCause('machines')">+ Add cause</button>
-                    </div>
-                    
-                    <div class="cause-category">
-                        <label class="category-label">Measurement</label>
-                        <div class="cause-items" id="measurementCauses"></div>
-                        <button class="add-cause-btn" onclick="addCause('measurement')">+ Add cause</button>
-                    </div>
-                    
-                    <div class="cause-category">
-                        <label class="category-label">Environment</label>
-                        <div class="cause-items" id="environmentCauses"></div>
-                        <button class="add-cause-btn" onclick="addCause('environment')">+ Add cause</button>
-                    </div>
-                </div>
-                
-                <div class="fill-status">
-                    <span id="completionText">0% complete</span>
-                </div>
+        <div class="diagram-wrapper">
+            <div class="fishbone-container">
+                <svg id="fishboneSvg" viewBox="0 0 1600 800" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <style>
+                            .bone-line { stroke: #000; stroke-linecap: round; fill: none; }
+                            .bone-label { font-size: 13px; font-weight: 600; fill: #000; }
+                            .cause-text { font-size: 11px; fill: #000; cursor: pointer; }
+                            .cause-text:hover { text-decoration: underline; }
+                            .main-bone-line { stroke-width: 4; }
+                            .sub-bone-line { stroke-width: 2; opacity: 0.7; }
+                            .category-label-rect { fill: rgba(255,255,255,0.9); stroke: #000; stroke-width: 1; }
+                        </style>
+                    </defs>
+                </svg>
             </div>
-            
-            <div class="diagram-wrapper">
-                <div class="fishbone-container">
-                    <svg id="fishboneSvg" viewBox="0 0 1400 700" xmlns="http://www.w3.org/2000/svg"></svg>
-                </div>
-                <button class="export-btn" onclick="exportDiagram()">↓ Export PNG</button>
-            </div>
+            <button class="export-btn" onclick="exportDiagram()">Export PNG</button>
         </div>
     </div>
     
     <script>
         const state = {
-            problem: '',
-            people: [],
-            methods: [],
-            materials: [],
-            machines: [],
-            measurement: [],
-            environment: []
+            problem: 'Problem',
+            people: ['', '', ''],
+            methods: ['', '', ''],
+            materials: ['', '', ''],
+            machines: ['', '', ''],
+            measurement: ['', '', ''],
+            environment: ['', '', '']
         };
         
         const categories = [
-            { key: 'people', label: 'People', position: 0.12, side: 'top' },
-            { key: 'methods', label: 'Methods', position: 0.27, side: 'bottom' },
-            { key: 'materials', label: 'Materials', position: 0.42, side: 'top' },
-            { key: 'machines', label: 'Machines', position: 0.57, side: 'bottom' },
-            { key: 'measurement', label: 'Measurement', position: 0.72, side: 'top' },
-            { key: 'environment', label: 'Environment', position: 0.87, side: 'bottom' }
+            { key: 'people', label: 'People', position: 0.1, side: 'top' },
+            { key: 'methods', label: 'Methods', position: 0.25, side: 'bottom' },
+            { key: 'materials', label: 'Materials', position: 0.4, side: 'top' },
+            { key: 'machines', label: 'Machines', position: 0.55, side: 'bottom' },
+            { key: 'measurement', label: 'Measurement', position: 0.7, side: 'top' },
+            { key: 'environment', label: 'Environment', position: 0.85, side: 'bottom' }
         ];
         
-        function addCause(category) {
-            state[category].push('');
-            renderInputs();
-            draw();
-            updateCompletion();
-            triggerWobble();
-        }
+        let activeEditorId = null;
         
-        function removeCause(category, index) {
-            state[category].splice(index, 1);
-            renderInputs();
-            draw();
-            updateCompletion();
-            triggerWobble();
-        }
-        
-        function updateCause(category, index, value) {
+        function updateCauseText(category, index, value) {
             state[category][index] = value;
             draw();
-            updateCompletion();
         }
         
         function updateProblem(value) {
@@ -383,39 +162,53 @@
             draw();
         }
         
-        function triggerWobble() {
-            const container = document.querySelector('.fishbone-container');
-            container.classList.remove('wobble-active');
-            void container.offsetWidth;
-            container.classList.add('wobble-active');
+        function addCauseToCategory(category) {
+            state[category].push('');
+            draw();
         }
         
-        function renderInputs() {
-            const categoryMap = {
-                people: 'peopleCauses',
-                methods: 'methodsCauses',
-                materials: 'materialsCauses',
-                machines: 'machinesCauses',
-                measurement: 'measurementCauses',
-                environment: 'environmentCauses'
+        function removeCauseFromCategory(category, index) {
+            state[category].splice(index, 1);
+            draw();
+        }
+        
+        function makeTextEditable(category, index, textElement, currentValue) {
+            if (activeEditorId) return;
+            activeEditorId = category + '-' + index;
+            
+            const bbox = textElement.getBBox();
+            const svgRect = document.getElementById('fishboneSvg').getBoundingClientRect();
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'text-editor';
+            input.value = currentValue;
+            input.style.left = (svgRect.left + bbox.x) + 'px';
+            input.style.top = (svgRect.top + bbox.y - 10) + 'px';
+            input.style.width = Math.max(60, bbox.width + 10) + 'px';
+            
+            input.onblur = function() {
+                const newValue = input.value.trim();
+                if (category === 'problem') {
+                    updateProblem(newValue);
+                } else {
+                    updateCauseText(category, index, newValue);
+                }
+                document.body.removeChild(input);
+                activeEditorId = null;
             };
             
-            Object.keys(categoryMap).forEach(cat => {
-                const container = document.getElementById(categoryMap[cat]);
-                container.innerHTML = state[cat].map((item, idx) => `
-                    <div class="cause-item">
-                        <input 
-                            type="text" 
-                            class="cause-input"
-                            placeholder="Cause details" 
-                            value="${item}"
-                            onchange="updateCause('${cat}', ${idx}, this.value)"
-                            oninput="updateCause('${cat}', ${idx}, this.value)"
-                        >
-                        <button class="icon-btn delete" onclick="removeCause('${cat}', ${idx})">−</button>
-                    </div>
-                `).join('');
-            });
+            input.onkeydown = function(e) {
+                if (e.key === 'Enter') input.blur();
+                if (e.key === 'Escape') {
+                    document.body.removeChild(input);
+                    activeEditorId = null;
+                }
+            };
+            
+            document.body.appendChild(input);
+            input.focus();
+            input.setSelectionRange(input.value.length, input.value.length);
         }
         
         function draw() {
@@ -426,88 +219,107 @@
             
             const centerY = height / 2;
             const spineStartX = 80;
-            const spineEndX = 1250;
+            const spineEndX = 1450;
             
             let svgContent = '';
             
-            // Background
-            svgContent += `<rect x="0" y="0" width="${width}" height="${height}" fill="#7fffd4"/>`;
+            svgContent += '<line x1="' + spineStartX + '" y1="' + centerY + '" x2="' + spineEndX + '" y2="' + centerY + '" class="bone-line main-bone-line"/>';
             
-            // Spine - horizontal line from tail to head
-            svgContent += `<line x1="${spineStartX}" y1="${centerY}" x2="${spineEndX}" y2="${centerY}" stroke="#000" stroke-width="5" stroke-linecap="round"/>`;
+            svgContent += '<polygon points="' + spineStartX + ',' + centerY + ' ' + (spineStartX-40) + ',' + (centerY-25) + ' ' + (spineStartX-40) + ',' + (centerY+25) + '" fill="#000"/>';
             
-            // Tail (left side)
-            svgContent += `<polygon points="${spineStartX},${centerY} ${spineStartX-40},${centerY-30} ${spineStartX-40},${centerY+30}" fill="#000"/>`;
+            svgContent += '<text x="' + (spineStartX - 50) + '" y="' + centerY + '" font-size="13" font-weight="700" text-anchor="end" dominant-baseline="middle" fill="#000" style="cursor: pointer;" onclick="makeTextEditable(\'problem\', 0, this, state.problem)">' + state.problem + '</text>';
             
-            // Calculate completion for head
-            const totalFields = 1 + Object.keys(state).filter(k => k !== 'problem').reduce((acc, cat) => acc + state[cat].length, 0);
-            const filledFields = (state.problem ? 1 : 0) + Object.keys(state).filter(k => k !== 'problem').reduce((acc, cat) => acc + state[cat].filter(v => v.trim()).length, 0);
-            const percent = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
-            const headScale = 0.4;
-            
-            // Fish head (right side) - switched between happy/sad
-            const headSvg = percent < 50 ? 
-                `<g transform="translate(${spineEndX + 40}, ${centerY}) scale(${headScale})"><path d="M117.18,245.19c0-24.8,11.52-46.9,29.48-61.28,0,.08,0,.15,0,.23,0,42.38,33.61,76.9,75.63,78.39,26.9-23.43,46.52-54.74,51.02-96.62C289.25,17.57,59,1.69,6.04,0,1.59-.14-1.12,6.92,1.38,12.16c13.72,28.77,45.93,101.45,45.93,149.5S14.26,289.68.86,319.87c-2.34,5.27.41,12.11,4.79,11.94,23.43-.9,82.98-5.23,140.07-26.08-17.43-14.39-28.54-36.16-28.54-60.53ZM103.93,102.88c0-18.29,14.83-33.12,33.12-33.12s33.12,14.83,33.12,33.12-14.83,33.12-33.12,33.12-33.12-14.83-33.12-33.12Z"/></g>` :
-                `<g transform="translate(${spineEndX + 40}, ${centerY}) scale(${headScale})"><path d="M117.18,245.19c0-24.8,11.52-46.9,29.48-61.28,0,.08,0,.15,0,.23,0,42.38,33.61,76.9,75.63,78.39,26.9-23.43,46.52-54.74,51.02-96.62C289.25,17.57,59,1.69,6.04,0,1.59-.14-1.12,6.92,1.38,12.16c13.72,28.77,45.93,101.45,45.93,149.5S14.26,289.68.86,319.87c-2.34,5.27.41,12.11,4.79,11.94,23.43-.9,82.98-5.23,140.07-26.08-17.43-14.39-28.54-36.16-28.54-60.53ZM103.93,102.88c0-18.29,14.83-33.12,33.12-33.12s33.12,14.83,33.12,33.12-14.83,33.12-33.12,33.12-33.12-14.83-33.12-33.12Z"/></g>`;
-            
-            svgContent += headSvg;
-            
-            // Bones and causes
-            categories.forEach((cat) => {
+            categories.forEach(function(cat) {
                 const boneX = spineStartX + (spineEndX - spineStartX) * cat.position;
                 const isTop = cat.side === 'top';
-                const angle = isTop ? -45 : 45;
+                const angle = isTop ? -35 : 35;
                 const rad = angle * Math.PI / 180;
-                const boneLength = 160;
+                const boneLength = 140;
                 const endX = boneX + boneLength * Math.cos(rad);
                 const endY = centerY + boneLength * Math.sin(rad);
                 
-                // Main bone line
-                svgContent += `<line x1="${boneX}" y1="${centerY}" x2="${endX}" y2="${endY}" stroke="#000" stroke-width="4" stroke-linecap="round"/>`;
+                svgContent += '<line x1="' + boneX + '" y1="' + centerY + '" x2="' + endX + '" y2="' + endY + '" class="bone-line main-bone-line"/>';
                 
-                // Category label on bone
-                const labelAngle = angle;
-                const labelRad = labelAngle * Math.PI / 180;
-                const labelDist = 90;
+                const labelRad = (angle * Math.PI / 180);
+                const labelDist = 70;
                 const labelX = boneX + labelDist * Math.cos(labelRad);
                 const labelY = centerY + labelDist * Math.sin(labelRad);
                 
-                svgContent += `<text x="${labelX}" y="${labelY}" font-size="14" font-weight="700" text-anchor="middle" fill="#000" dominant-baseline="middle">${cat.label}</text>`;
+                svgContent += '<rect x="' + (labelX - 30) + '" y="' + (labelY - 12) + '" width="60" height="24" rx="4" class="category-label-rect"/>';
+                svgContent += '<text x="' + labelX + '" y="' + labelY + '" font-size="12" font-weight="700" text-anchor="middle" dominant-baseline="middle" fill="#000">' + cat.label + '</text>';
                 
-                // Sub-bones (causes)
                 const causes = state[cat.key];
-                causes.forEach((cause, idx) => {
-                    const subAngle = angle + (idx - causes.length / 2 + 0.5) * 20;
+                const angleSpan = 50;
+                const anglePerCause = causes.length > 1 ? angleSpan / (causes.length - 1) : 0;
+                
+                causes.forEach(function(cause, idx) {
+                    const offset = causes.length > 1 ? (idx - causes.length / 2 + 0.5) * anglePerCause : 0;
+                    const subAngle = angle + offset;
                     const subRad = subAngle * Math.PI / 180;
-                    const subLength = 80;
+                    const subLength = 70;
                     const subEndX = endX + subLength * Math.cos(subRad);
                     const subEndY = endY + subLength * Math.sin(subRad);
                     
-                    // Sub-bone line
-                    svgContent += `<line x1="${endX}" y1="${endY}" x2="${subEndX}" y2="${subEndY}" stroke="#000" stroke-width="2" opacity="0.7" stroke-linecap="round"/>`;
+                    svgContent += '<line x1="' + endX + '" y1="' + endY + '" x2="' + subEndX + '" y2="' + subEndY + '" class="bone-line sub-bone-line"/>';
                     
-                    // Cause text (positioned along sub-bone)
-                    if (cause.trim()) {
-                        const textDist = 40;
-                        const textRad = subRad;
-                        const textX = endX + textDist * Math.cos(textRad);
-                        const textY = endY + textDist * Math.sin(textRad);
-                        
-                        svgContent += `<text x="${textX}" y="${textY}" font-size="11" fill="#000" text-anchor="middle" dominant-baseline="middle" opacity="0.8">${cause}</text>`;
-                    }
+                    const displayText = cause || '(empty)';
+                    const textId = 'text-' + cat.key + '-' + idx;
+                    svgContent += '<text id="' + textId + '" x="' + subEndX + '" y="' + subEndY + '" class="cause-text" text-anchor="middle" dominant-baseline="middle" onclick="makeTextEditable(\'' + cat.key + '\', ' + idx + ', this, \'' + cause + '\')">' + displayText + '</text>';
                 });
             });
             
             svg.innerHTML = svgContent;
-        }
-        
-        function updateCompletion() {
-            const totalFields = 1 + Object.keys(state).filter(k => k !== 'problem').reduce((acc, cat) => acc + state[cat].length, 0);
-            const filledFields = (state.problem ? 1 : 0) + Object.keys(state).filter(k => k !== 'problem').reduce((acc, cat) => acc + state[cat].filter(v => v.trim()).length, 0);
-            const percent = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
             
-            document.getElementById('completionText').textContent = `${percent}% complete`;
-            draw();
+            categories.forEach(function(cat) {
+                const boneX = spineStartX + (spineEndX - spineStartX) * cat.position;
+                const isTop = cat.side === 'top';
+                const angle = isTop ? -35 : 35;
+                const rad = angle * Math.PI / 180;
+                const boneLength = 140;
+                const endX = boneX + boneLength * Math.cos(rad);
+                const endY = centerY + boneLength * Math.sin(rad);
+                
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.style.cursor = 'pointer';
+                
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', endX);
+                circle.setAttribute('cy', endY);
+                circle.setAttribute('r', '14');
+                circle.setAttribute('fill', '#333');
+                circle.setAttribute('opacity', '0');
+                circle.style.cursor = 'pointer';
+                circle.onclick = function(e) {
+                    e.stopPropagation();
+                    addCauseToCategory(cat.key);
+                };
+                
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', endX);
+                text.setAttribute('y', endY);
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('dominant-baseline', 'middle');
+                text.setAttribute('font-size', '16');
+                text.setAttribute('font-weight', 'bold');
+                text.setAttribute('fill', '#333');
+                text.setAttribute('opacity', '0');
+                text.setAttribute('pointer-events', 'none');
+                text.textContent = '+';
+                
+                circle.onmouseenter = function() {
+                    circle.setAttribute('opacity', '0.8');
+                    text.setAttribute('opacity', '1');
+                };
+                
+                circle.onmouseleave = function() {
+                    circle.setAttribute('opacity', '0');
+                    text.setAttribute('opacity', '0');
+                };
+                
+                g.appendChild(circle);
+                g.appendChild(text);
+                svg.appendChild(g);
+            });
         }
         
         function exportDiagram() {
@@ -515,14 +327,18 @@
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             
-            canvas.width = 1400;
-            canvas.height = 700;
+            const bbox = svg.getBBox();
+            canvas.width = bbox.width + 40;
+            canvas.height = bbox.height + 40;
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
             
             const svgData = new XMLSerializer().serializeToString(svg);
             const img = new Image();
             
             img.onload = function() {
-                ctx.drawImage(img, 0, 0);
+                ctx.drawImage(img, 20, 20);
                 
                 const link = document.createElement('a');
                 link.href = canvas.toDataURL('image/png');
@@ -533,11 +349,7 @@
             img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
         }
         
-        // Initialize
-        renderInputs();
         draw();
-        updateCompletion();
-        
         window.addEventListener('resize', draw);
     </script>
 </body>
