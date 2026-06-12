@@ -185,8 +185,8 @@
         
         .diagram-wrapper {
             position: relative;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: #7fffd4;
+            border: 1px solid rgba(0,0,0,0.1);
             border-radius: 8px;
             padding: 32px;
             display: flex;
@@ -347,67 +347,62 @@
         
         // Fish head SVG states (6+ stages from dead to happy)
         const fishHeads = [
-            // Stage 0: Empty (dead fish)
+            // Stage 0: Empty (dead fish head - black triangle)
             `<g id="head-0">
-                <ellipse cx="920" cy="350" rx="50" ry="60" fill="#555" stroke="#888" stroke-width="2"/>
-                <circle cx="935" cy="330" r="8" fill="#222"/>
-                <line x1="925" y1="325" x2="945" y2="345" stroke="#ff6b6b" stroke-width="2"/>
-                <line x1="945" y1="325" x2="925" y2="345" stroke="#ff6b6b" stroke-width="2"/>
-                <path d="M 910 375 Q 920 385 930 375" stroke="#999" stroke-width="1.5" fill="none"/>
+                <polygon points="920,320 980,350 920,380" fill="#000" stroke="#000" stroke-width="1"/>
+                <circle cx="950" cy="350" r="6" fill="none" stroke="#fff" stroke-width="1.5"/>
+                <line x1="945" y1="345" x2="955" y2="355" stroke="#fff" stroke-width="1"/>
+                <line x1="955" y1="345" x2="945" y2="355" stroke="#fff" stroke-width="1"/>
             </g>`,
             
             // Stage 1: Opening eye
             `<g id="head-1">
-                <ellipse cx="920" cy="350" rx="50" ry="60" fill="#666" stroke="#999" stroke-width="2"/>
-                <circle cx="935" cy="330" r="8" fill="#ddd"/>
-                <circle cx="936" cy="330" r="4" fill="#222"/>
-                <path d="M 910 375 Q 920 380 930 375" stroke="#aaa" stroke-width="1.5" fill="none"/>
+                <polygon points="920,320 980,350 920,380" fill="#000" stroke="#000" stroke-width="1"/>
+                <circle cx="950" cy="350" r="7" fill="none" stroke="#fff" stroke-width="1.5"/>
+                <circle cx="950" cy="350" r="3" fill="#fff"/>
             </g>`,
             
             // Stage 2: Clear eye
             `<g id="head-2">
-                <ellipse cx="920" cy="350" rx="50" ry="60" fill="#777" stroke="#aaa" stroke-width="2"/>
-                <circle cx="935" cy="330" r="10" fill="#fff"/>
-                <circle cx="936" cy="330" r="5" fill="#222"/>
-                <path d="M 910 375 Q 920 378 930 375" stroke="#bbb" stroke-width="1.5" fill="none"/>
+                <polygon points="920,320 980,350 920,380" fill="#000" stroke="#000" stroke-width="1"/>
+                <circle cx="950" cy="350" r="8" fill="none" stroke="#fff" stroke-width="2"/>
+                <circle cx="950" cy="350" r="4" fill="#fff"/>
             </g>`,
             
             // Stage 3: Slight smile
             `<g id="head-3">
-                <ellipse cx="920" cy="350" rx="50" ry="60" fill="#888" stroke="#bbb" stroke-width="2"/>
-                <circle cx="935" cy="330" r="10" fill="#fff"/>
-                <circle cx="936" cy="330" r="5" fill="#222"/>
-                <path d="M 910 375 Q 920 380 930 375" stroke="#ccc" stroke-width="2" fill="none"/>
+                <polygon points="920,320 980,350 920,380" fill="#000" stroke="#000" stroke-width="1"/>
+                <circle cx="950" cy="345" r="8" fill="none" stroke="#fff" stroke-width="2"/>
+                <circle cx="950" cy="345" r="4" fill="#fff"/>
+                <path d="M 935 368 Q 950 375 965 368" stroke="#fff" stroke-width="1.5" fill="none"/>
             </g>`,
             
             // Stage 4: Clear smile
             `<g id="head-4">
-                <ellipse cx="920" cy="350" rx="50" ry="60" fill="#999" stroke="#ddd" stroke-width="2"/>
-                <circle cx="935" cy="330" r="11" fill="#fff"/>
-                <circle cx="936" cy="330" r="6" fill="#222"/>
-                <circle cx="936" cy="330" r="2" fill="#fff" opacity="0.6"/>
-                <path d="M 905 375 Q 920 388 935 375" stroke="#ddd" stroke-width="2.5" fill="none"/>
+                <polygon points="920,320 980,350 920,380" fill="#000" stroke="#000" stroke-width="1"/>
+                <circle cx="950" cy="343" r="9" fill="none" stroke="#fff" stroke-width="2"/>
+                <circle cx="950" cy="343" r="5" fill="#fff"/>
+                <path d="M 930 370 Q 950 378 970 370" stroke="#fff" stroke-width="2" fill="none"/>
             </g>`,
             
             // Stage 5: Big smile, bright eye
             `<g id="head-5">
-                <ellipse cx="920" cy="350" rx="50" ry="60" fill="#aaa" stroke="#e8eef2" stroke-width="2"/>
-                <circle cx="935" cy="330" r="12" fill="#fff"/>
-                <circle cx="936" cy="330" r="7" fill="#222"/>
-                <circle cx="937" cy="328" r="3" fill="#fff"/>
-                <path d="M 900 378 Q 920 395 940 378" stroke="#e8eef2" stroke-width="3" fill="none"/>
+                <polygon points="920,320 980,350 920,380" fill="#000" stroke="#000" stroke-width="1"/>
+                <circle cx="950" cy="340" r="10" fill="none" stroke="#fff" stroke-width="2.5"/>
+                <circle cx="950" cy="340" r="6" fill="#fff"/>
+                <path d="M 925 372 Q 950 382 975 372" stroke="#fff" stroke-width="2.5" fill="none"/>
             </g>`,
             
             // Stage 6: Radiant (fully complete)
             `<g id="head-6">
-                <ellipse cx="920" cy="350" rx="50" ry="60" fill="#bbb" stroke="#7dd3fc" stroke-width="2.5"/>
-                <circle cx="935" cy="330" r="13" fill="#7dd3fc"/>
-                <circle cx="936" cy="330" r="8" fill="#222"/>
-                <circle cx="938" cy="327" r="4" fill="#fff"/>
-                <path d="M 895 380 Q 920 400 945 380" stroke="#7dd3fc" stroke-width="3.5" fill="none"/>
+                <polygon points="920,320 980,350 920,380" fill="#000" stroke="#000" stroke-width="1"/>
+                <circle cx="950" cy="338" r="11" fill="none" stroke="#fff" stroke-width="3"/>
+                <circle cx="950" cy="338" r="7" fill="#fff"/>
+                <path d="M 920 375 Q 950 386 980 375" stroke="#fff" stroke-width="3" fill="none"/>
                 <!-- Sparkles -->
-                <circle cx="895" cy="310" r="2" fill="#7dd3fc"/>
-                <circle cx="955" cy="315" r="2" fill="#7dd3fc"/>
+                <circle cx="895" cy="310" r="2" fill="#fff"/>
+                <circle cx="960" cy="305" r="2" fill="#fff"/>
+                <circle cx="995" cy="315" r="1.5" fill="#fff"/>
             </g>`
         ];
         
@@ -455,11 +450,16 @@
             // Update fish head based on completion
             const headStage = Math.min(6, Math.floor(percent / 16.67));
             
-            // Update all head references in SVG
-            const headGroups = document.querySelectorAll('[id^="head-"]');
-            headGroups.forEach(g => g.style.display = 'none');
-            const activeHead = document.getElementById(`head-${headStage}`);
-            if (activeHead) activeHead.style.display = 'block';
+            // Redraw with correct head
+            draw();
+            
+            // Then update head visibility
+            setTimeout(() => {
+                const headGroups = document.querySelectorAll('[id^="head-"]');
+                headGroups.forEach(g => g.style.display = 'none');
+                const activeHead = document.getElementById(`head-${headStage}`);
+                if (activeHead) activeHead.style.display = 'block';
+            }, 10);
         }
         
         function renderInputs() {
@@ -497,13 +497,13 @@
             const height = parseFloat(viewBox[3]);
             
             const centerY = height / 2;
-            const spineStartX = 50;
+            const spineStartX = 100;
             const spineEndX = 850;
             
             let svgContent = '';
             
-            // Main spine
-            svgContent += `<line x1="${spineStartX}" y1="${centerY}" x2="${spineEndX}" y2="${centerY}" stroke="#7dd3fc" stroke-width="3"/>`;
+            // Main spine (bold black, pointing from right to left towards tail)
+            svgContent += `<line x1="${spineEndX}" y1="${centerY}" x2="${spineStartX}" y2="${centerY}" stroke="#000" stroke-width="4" stroke-linecap="round"/>`;
             
             // Bones and causes
             categories.forEach(cat => {
@@ -514,13 +514,13 @@
                 const endX = boneX + boneLength * Math.cos(rad);
                 const endY = centerY + boneLength * Math.sin(rad);
                 
-                // Main bone
-                svgContent += `<line x1="${boneX}" y1="${centerY}" x2="${endX}" y2="${endY}" stroke="#8a94a6" stroke-width="2"/>`;
+                // Main bone (bold black)
+                svgContent += `<line x1="${boneX}" y1="${centerY}" x2="${endX}" y2="${endY}" stroke="#000" stroke-width="3" stroke-linecap="round"/>`;
                 
                 // Bone label
                 const labelX = endX + (cat.side === 'top' ? -25 : -25);
                 const labelY = endY + (cat.side === 'top' ? -25 : 25);
-                svgContent += `<text x="${labelX}" y="${labelY}" font-size="12" font-weight="600" text-anchor="middle" fill="#7dd3fc" text-transform="uppercase">${cat.label}</text>`;
+                svgContent += `<text x="${labelX}" y="${labelY}" font-size="12" font-weight="600" text-anchor="middle" fill="#000" text-transform="uppercase">${cat.label}</text>`;
                 
                 // Sub-bones (causes)
                 const causes = state[cat.key];
@@ -531,24 +531,22 @@
                     const subEndX = endX + subLength * Math.cos(subRad);
                     const subEndY = endY + subLength * Math.sin(subRad);
                     
-                    svgContent += `<line x1="${endX}" y1="${endY}" x2="${subEndX}" y2="${subEndY}" stroke="#5a6478" stroke-width="1.5" opacity="0.7"/>`;
+                    svgContent += `<line x1="${endX}" y1="${endY}" x2="${subEndX}" y2="${subEndY}" stroke="#000" stroke-width="1.5" opacity="0.8" stroke-linecap="round"/>`;
                     
                     // Cause text (positioned to the left of spine)
                     if (cause.trim()) {
                         const textX = subEndX + (cat.side === 'top' ? -15 : -15);
                         const textAnchor = cat.side === 'top' ? 'end' : 'end';
-                        svgContent += `<text x="${textX}" y="${subEndY}" font-size="11" fill="#e8eef2" text-anchor="${textAnchor}" opacity="0.8">${cause}</text>`;
+                        svgContent += `<text x="${textX}" y="${subEndY}" font-size="11" fill="#000" text-anchor="${textAnchor}" opacity="0.85">${cause}</text>`;
                     }
                 });
             });
             
-            // Fish heads (all versions, visible/hidden by completion)
-            fishHeads.forEach((head, idx) => {
-                svgContent += head;
-                if (idx > 0) {
-                    svgContent = svgContent.replace(`id="head-${idx}"`, `id="head-${idx}" style="display:none"`);
-                }
-            });
+            // Fish head (triangle pointing right towards spine end)
+            svgContent += fishHeads[0]; // Placeholder; will be updated by completion
+            
+            // Fish tail (small triangle pointing left towards spine start)
+            svgContent += `<polygon points="100,340 40,350 100,360" fill="#000" stroke="#000" stroke-width="1"/>`;
             
             svg.innerHTML = svgContent;
         }
