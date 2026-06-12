@@ -8,28 +8,33 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f9fa; }
         .wrapper { padding: 40px; max-width: 1600px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 40px; }
-        h1 { font-size: 32px; margin-bottom: 8px; font-weight: 700; }
-        .subtitle { color: #999; font-size: 13px; }
+        h1 { text-align: center; font-size: 32px; margin-bottom: 10px; font-weight: 700; }
+        .subtitle { text-align: center; color: #999; font-size: 13px; margin-bottom: 40px; }
         .diagram-container { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 40px 60px; min-height: 700px; position: relative; }
-        svg { display: block; width: 100%; height: auto; background: white; }
-        .controls { margin-top: 40px; display: flex; gap: 20px; flex-wrap: wrap; padding: 20px; background: #f5f5f5; border-radius: 6px; }
+        svg { display: block; width: 100%; height: auto; }
+        
+        .controls { margin-top: 40px; padding: 20px; background: #f5f5f5; border-radius: 6px; display: flex; gap: 20px; flex-wrap: wrap; }
         .control-group { display: flex; align-items: center; gap: 8px; }
-        label { font-size: 13px; font-weight: 600; color: #333; }
-        button { padding: 6px 12px; background: #333; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 12px; transition: background 0.2s; }
-        button:hover { background: #000; }
+        .control-group label { font-weight: 600; font-size: 13px; }
+        .control-group button { padding: 6px 12px; background: #333; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 12px; }
+        .control-group button:hover { background: #000; }
         .export { margin-top: 20px; }
-        .export button { padding: 10px 20px; font-size: 13px; }
-        .item-badge { cursor: pointer; transition: opacity 0.2s; }
-        .item-badge:hover { opacity: 0.8; }
+        .export button { padding: 10px 20px; font-size: 13px; background: #333; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        .export button:hover { background: #000; }
+        
+        .dropdown { position: fixed; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 10000; min-width: 200px; max-height: 300px; overflow-y: auto; display: none; }
+        .dropdown-search { padding: 8px; border-bottom: 1px solid #eee; }
+        .dropdown-search input { width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 3px; font-size: 12px; }
+        .dropdown-search input:focus { outline: none; border-color: #0066cc; }
+        .dropdown-item { padding: 8px 12px; cursor: pointer; font-size: 12px; border-bottom: 1px solid #f0f0f0; }
+        .dropdown-item:hover { background: #f5f5f5; }
+        .dropdown-item.selected { background: #e6f2ff; color: #0066cc; font-weight: 600; }
     </style>
 </head>
 <body>
     <div class="wrapper">
-        <div class="header">
-            <h1>Fishbone Diagram</h1>
-            <p class="subtitle">Interactive cause-and-effect analysis diagram</p>
-        </div>
+        <h1>Fishbone Diagram</h1>
+        <p class="subtitle">Interactive cause-and-effect analysis</p>
         
         <div class="diagram-container">
             <svg id="fishbone" viewBox="0 0 2000 700" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -40,38 +45,45 @@
                 <label>Ribs:</label>
                 <button onclick="addRib()">+ Add</button>
                 <button onclick="removeRib()">− Remove</button>
-                <span id="ribCount">6</span>
             </div>
             <div class="control-group">
-                <label>Items per rib:</label>
-                <button onclick="addItemPerRib()">+ More</button>
-                <button onclick="removeItemPerRib()">− Fewer</button>
-            </div>
-            <div class="control-group">
-                <label>Problem:</label>
-                <input id="problemInput" type="text" value="Problem Definition" style="padding: 6px 10px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; width: 200px;">
+                <button onclick="exportDiagram()">↓ Export PNG</button>
             </div>
         </div>
-        
-        <div class="export">
-            <button onclick="exportDiagram()">↓ Export as PNG</button>
+    </div>
+    
+    <div id="dropdown" class="dropdown">
+        <div class="dropdown-search">
+            <input id="dropdownSearch" type="text" placeholder="Type to filter...">
         </div>
+        <div id="dropdownList"></div>
     </div>
     
     <script>
         const state = {
             problem: 'Problem Definition',
             ribs: [
-                { label: 'Materials', items: ['Raw materials', 'Storage', 'Quality', ''] },
-                { label: 'People', items: ['Training', 'Experience', 'Awareness', ''] },
-                { label: 'Equipment', items: ['Maintenance', 'Calibration', 'Efficiency', ''] },
-                { label: 'Processes', items: ['Procedures', 'Documentation', 'Compliance', ''] },
-                { label: 'Environment', items: ['Temperature', 'Humidity', 'Safety', ''] },
-                { label: 'Testing & Standards', items: ['Methods', 'Accuracy', 'Records', ''] }
+                { label: 'Materials', items: ['Raw material quality', 'Storage conditions', 'Supplier reliability'] },
+                { label: 'People', items: ['Training level', 'Experience', 'Availability'] },
+                { label: 'Equipment', items: ['Maintenance', 'Calibration', 'Efficiency'] },
+                { label: 'Processes', items: ['Procedures', 'Documentation', 'Compliance'] },
+                { label: 'Environment', items: ['Temperature', 'Humidity', 'Safety'] },
+                { label: 'Testing & Standards', items: ['Test methods', 'Accuracy', 'Records'] }
             ]
         };
         
+        const presets = {
+            'Materials': ['Raw material quality', 'Storage conditions', 'Supplier reliability', 'Contamination risk', 'Expiration date'],
+            'People': ['Training level', 'Experience', 'Availability', 'Skill gaps', 'Motivation'],
+            'Equipment': ['Maintenance', 'Calibration', 'Age/Condition', 'Capacity', 'Reliability'],
+            'Processes': ['Procedures', 'Documentation', 'Standards compliance', 'Efficiency', 'Standardization'],
+            'Environment': ['Temperature', 'Humidity', 'Lighting', 'Contamination', 'Safety'],
+            'Testing & Standards': ['Test methods', 'Standards compliance', 'Measurement accuracy', 'Documentation', 'Frequency']
+        };
+        
         const colors = ['#FF6B9D', '#7B68EE', '#00CED1', '#FFD700', '#FF8C00', '#20B2AA', '#FF69B4', '#1E90FF', '#FF4500', '#32CD32'];
+        
+        let activeDropdown = null;
         
         function draw() {
             const svg = document.getElementById('fishbone');
@@ -81,85 +93,59 @@
             const tailX = 80;
             
             let html = '';
-            
-            // Background
             html += `<rect width="${w}" height="${h}" fill="white"/>`;
-            
-            // Spine (horizontal line)
             html += `<line x1="${tailX}" y1="${centerY}" x2="${headX}" y2="${centerY}" stroke="#333" stroke-width="4" stroke-linecap="round"/>`;
-            
-            // Tail (left)
             html += `<polygon points="${tailX},${centerY} ${tailX - 50},${centerY - 35} ${tailX - 50},${centerY + 35}" fill="#1a2332" stroke="#000" stroke-width="2"/>`;
-            
-            // Head (right)
             html += `<polygon points="${headX},${centerY} ${headX + 60},${centerY - 45} ${headX + 60},${centerY + 45}" fill="#1a2332" stroke="#000" stroke-width="2"/>`;
             
             // Problem label
-            html += `<g onclick="editProblem()">
-                <rect x="${headX + 15}" y="${centerY - 65}" width="120" height="50" rx="8" fill="#f0f0f0" stroke="#999" stroke-width="1"/>
-                <text x="${headX + 75}" y="${centerY - 35}" font-size="14" font-weight="700" text-anchor="middle" fill="#000">${state.problem}</text>
-                <style>.problem-label { cursor: pointer; }</style>
-            </g>`;
+            html += `<rect x="${headX + 15}" y="${centerY - 65}" width="120" height="50" rx="8" fill="#f0f0f0" stroke="#999" stroke-width="1" onclick="editProblem()" style="cursor: pointer;"/>`;
+            html += `<text x="${headX + 75}" y="${centerY - 35}" font-size="14" font-weight="700" text-anchor="middle" fill="#000" pointer-events="none">${state.problem}</text>`;
             
-            // Ribs
+            // Draw ribs
             const ribCount = state.ribs.length;
-            const totalSpan = 160; // degrees
+            const totalSpan = 160;
             const startAngle = -totalSpan / 2;
             
             state.ribs.forEach((rib, ribIdx) => {
                 const angle = startAngle + (ribIdx / (ribCount - 1)) * totalSpan;
                 const rad = angle * Math.PI / 180;
                 
-                // Rib start (on spine)
                 const ribStartX = tailX + (headX - tailX) * (0.1 + ribIdx / ribCount * 0.7);
                 const ribStartY = centerY;
-                
-                // Rib end
                 const ribLen = 220;
                 const ribEndX = ribStartX + ribLen * Math.cos(rad);
                 const ribEndY = ribStartY + ribLen * Math.sin(rad);
                 
-                // Control point for curve
                 const cx = ribStartX + ribLen * 0.6 * Math.cos(rad);
                 const cy = ribStartY + ribLen * 0.6 * Math.sin(rad);
                 
-                // Draw curved rib
-                html += `<path d="M ${ribStartX} ${ribStartY} Q ${cx} ${cy} ${ribEndX} ${ribEndY}" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+                html += `<path d="M ${ribStartX} ${ribStartY} Q ${cx} ${cy} ${ribEndX} ${ribEndY}" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
                 
                 // Category label on spine
                 const labelDist = 50;
-                const labelRad = rad;
-                const labelX = ribStartX + labelDist * Math.cos(labelRad);
-                const labelY = ribStartY + labelDist * Math.sin(labelRad) - 15;
+                const labelX = ribStartX + labelDist * Math.cos(rad);
+                const labelY = ribStartY + labelDist * Math.sin(rad) - 20;
                 
-                html += `<text x="${labelX}" y="${labelY}" font-size="13" font-weight="700" text-anchor="middle" fill="#0066cc">${rib.label}</text>`;
+                html += `<text x="${labelX}" y="${labelY}" font-size="12" font-weight="700" text-anchor="middle" fill="#0066cc">${rib.label}</text>`;
                 
-                // Sub-items (branches off the rib)
-                const itemCount = rib.items.filter(i => i.trim()).length;
-                const itemSpread = 50;
-                
+                // Sub-items
                 rib.items.forEach((item, itemIdx) => {
-                    if (!item.trim()) return;
-                    
+                    const itemCount = rib.items.length;
+                    const itemSpread = 50;
                     const itemOffset = itemSpread * (itemIdx - itemCount / 2 + 0.5) / itemCount;
                     const itemRad = (angle + itemOffset) * Math.PI / 180;
                     
-                    // Branch off rib
                     const branchLen = 80;
                     const branchX = ribEndX + branchLen * Math.cos(itemRad);
                     const branchY = ribEndY + branchLen * Math.sin(itemRad);
                     
-                    // Branch line
                     html += `<line x1="${ribEndX}" y1="${ribEndY}" x2="${branchX}" y2="${branchY}" stroke="#999" stroke-width="1" opacity="0.6"/>`;
                     
-                    // Item badge (colored circle with text)
                     const color = colors[itemIdx % colors.length];
-                    const textLen = item.length;
-                    const boxW = Math.max(50, textLen * 6 + 16);
-                    
-                    html += `<g class="item-badge" onclick="editItem(${ribIdx}, ${itemIdx})" style="cursor: pointer;">
+                    html += `<g onclick="showDropdown(event, ${ribIdx}, ${itemIdx})" style="cursor: pointer;">
                         <circle cx="${branchX}" cy="${branchY}" r="22" fill="${color}" stroke="white" stroke-width="2" opacity="0.85"/>
-                        <text x="${branchX}" y="${branchY + 6}" font-size="11" font-weight="600" text-anchor="middle" fill="white" pointer-events="none">${item}</text>
+                        <text x="${branchX}" y="${branchY + 6}" font-size="10" font-weight="600" text-anchor="middle" fill="white" pointer-events="none">${item}</text>
                     </g>`;
                 });
             });
@@ -167,49 +153,69 @@
             svg.innerHTML = html;
         }
         
+        function showDropdown(e, ribIdx, itemIdx) {
+            e.stopPropagation();
+            activeDropdown = { ribIdx, itemIdx };
+            
+            const dropdown = document.getElementById('dropdown');
+            const list = document.getElementById('dropdownList');
+            const search = document.getElementById('dropdownSearch');
+            
+            const rib = state.ribs[ribIdx];
+            const presetItems = presets[rib.label] || [];
+            const currentValue = rib.items[itemIdx];
+            
+            list.innerHTML = presetItems.map(item => 
+                `<div class="dropdown-item ${item === currentValue ? 'selected' : ''}" onclick="selectItem(${ribIdx}, ${itemIdx}, '${item}')">
+                    ${item}
+                </div>`
+            ).join('');
+            
+            list.innerHTML += `<div style="padding: 8px; border-top: 1px solid #eee; font-size: 11px; color: #999;">
+                Or type custom value in search box above
+            </div>`;
+            
+            search.value = currentValue;
+            search.onchange = () => {
+                if (search.value.trim()) {
+                    selectItem(ribIdx, itemIdx, search.value.trim());
+                }
+            };
+            
+            const rect = e.target.getBoundingClientRect();
+            dropdown.style.left = rect.left + 'px';
+            dropdown.style.top = (rect.top + 30) + 'px';
+            dropdown.style.display = 'block';
+            search.focus();
+        }
+        
+        function selectItem(ribIdx, itemIdx, value) {
+            state.ribs[ribIdx].items[itemIdx] = value;
+            document.getElementById('dropdown').style.display = 'none';
+            draw();
+        }
+        
         function addRib() {
             if (state.ribs.length < 10) {
-                state.ribs.push({ label: `Category ${state.ribs.length + 1}`, items: ['Item 1', 'Item 2', ''] });
-                document.getElementById('ribCount').textContent = state.ribs.length;
+                state.ribs.push({
+                    label: `Category ${state.ribs.length + 1}`,
+                    items: ['Item 1', 'Item 2']
+                });
                 draw();
             }
         }
         
         function removeRib() {
-            if (state.ribs.length > 1) {
+            if (state.ribs.length > 2) {
                 state.ribs.pop();
-                document.getElementById('ribCount').textContent = state.ribs.length;
                 draw();
             }
-        }
-        
-        function addItemPerRib() {
-            state.ribs.forEach(rib => {
-                if (rib.items.length < 6) rib.items.push('');
-            });
-            draw();
-        }
-        
-        function removeItemPerRib() {
-            state.ribs.forEach(rib => {
-                if (rib.items.length > 1) rib.items.pop();
-            });
-            draw();
         }
         
         function editProblem() {
-            const val = prompt('Enter problem:', state.problem);
-            if (val !== null) {
-                state.problem = val || 'Problem';
-                document.getElementById('problemInput').value = state.problem;
-                draw();
-            }
-        }
-        
-        function editItem(ribIdx, itemIdx) {
-            const val = prompt('Enter item:', state.ribs[ribIdx].items[itemIdx]);
-            if (val !== null) {
-                state.ribs[ribIdx].items[itemIdx] = val;
+            const val = prompt('Enter problem statement:', state.problem);
+            if (val !== null && val.trim()) {
+                state.problem = val.trim();
                 draw();
             }
         }
@@ -235,9 +241,8 @@
             img.src = 'data:image/svg+xml;base64,' + btoa(new XMLSerializer().serializeToString(svg));
         }
         
-        document.getElementById('problemInput').addEventListener('change', (e) => {
-            state.problem = e.target.value || 'Problem';
-            draw();
+        document.addEventListener('click', () => {
+            document.getElementById('dropdown').style.display = 'none';
         });
         
         draw();
