@@ -19,7 +19,7 @@
         }
         
         .container {
-            max-width: 1600px;
+            max-width: 1800px;
             margin: 0 auto;
         }
         
@@ -42,10 +42,9 @@
         }
         
         .content {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 40px;
-            align-items: start;
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
         }
         
         .input-panel {
@@ -53,6 +52,9 @@
             border: 1px solid rgba(255,255,255,0.08);
             border-radius: 8px;
             padding: 32px;
+            min-width: 280px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         .problem-section {
@@ -96,9 +98,6 @@
             letter-spacing: 0.8px;
             color: #7dd3fc;
             margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
         
         .cause-items {
@@ -144,7 +143,7 @@
             background: rgba(255,255,255,0.08);
             color: #e8eef2;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -188,11 +187,17 @@
             background: #7fffd4;
             border: 1px solid rgba(0,0,0,0.1);
             border-radius: 8px;
-            padding: 32px;
+            padding: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 700px;
+            flex: 1;
+            min-height: 600px;
+        }
+        
+        .fishbone-container {
+            width: 100%;
+            height: 100%;
         }
         
         svg {
@@ -245,13 +250,17 @@
             }
         }
         
-        svg.wobble-active {
+        .fishbone-container.wobble-active {
             animation: wobble 0.6s ease-in-out;
         }
         
         @media (max-width: 1200px) {
             .content {
-                grid-template-columns: 1fr;
+                flex-direction: column;
+            }
+            
+            .input-panel {
+                min-width: auto;
             }
         }
     </style>
@@ -319,7 +328,9 @@
             </div>
             
             <div class="diagram-wrapper">
-                <svg id="fishboneSvg" viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg"></svg>
+                <div class="fishbone-container">
+                    <svg id="fishboneSvg" viewBox="0 0 1400 700" xmlns="http://www.w3.org/2000/svg"></svg>
+                </div>
                 <button class="export-btn" onclick="exportDiagram()">↓ Export PNG</button>
             </div>
         </div>
@@ -337,81 +348,13 @@
         };
         
         const categories = [
-            { key: 'people', label: 'People', position: 0.15, side: 'top' },
-            { key: 'methods', label: 'Methods', position: 0.3, side: 'bottom' },
-            { key: 'materials', label: 'Materials', position: 0.45, side: 'top' },
-            { key: 'machines', label: 'Machines', position: 0.6, side: 'bottom' },
-            { key: 'measurement', label: 'Measurement', position: 0.75, side: 'top' },
-            { key: 'environment', label: 'Environment', position: 0.9, side: 'bottom' }
+            { key: 'people', label: 'People', position: 0.12, side: 'top' },
+            { key: 'methods', label: 'Methods', position: 0.27, side: 'bottom' },
+            { key: 'materials', label: 'Materials', position: 0.42, side: 'top' },
+            { key: 'machines', label: 'Machines', position: 0.57, side: 'bottom' },
+            { key: 'measurement', label: 'Measurement', position: 0.72, side: 'top' },
+            { key: 'environment', label: 'Environment', position: 0.87, side: 'bottom' }
         ];
-        
-        // Fish head SVG states (6+ stages from dead to happy)
-        const fishHeads = [
-            // Stage 0: Empty (dead fish head - black triangle)
-            `<g id="head-0">
-                <polygon points="920,320 980,350 920,380" fill="#000" stroke="#000" stroke-width="1"/>
-                <circle cx="950" cy="350" r="6" fill="none" stroke="#fff" stroke-width="1.5"/>
-                <line x1="945" y1="345" x2="955" y2="355" stroke="#fff" stroke-width="1"/>
-                <line x1="955" y1="345" x2="945" y2="355" stroke="#fff" stroke-width="1"/>
-            </g>`,
-            
-            // Stage 1: Opening eye
-            `<g id="head-1">
-                <polygon points="920,320 980,350 920,380" fill="#000" stroke="#000" stroke-width="1"/>
-                <circle cx="950" cy="350" r="7" fill="none" stroke="#fff" stroke-width="1.5"/>
-                <circle cx="950" cy="350" r="3" fill="#fff"/>
-            </g>`,
-            
-            // Stage 2: Clear eye
-            `<g id="head-2">
-                <polygon points="920,320 980,350 920,380" fill="#000" stroke="#000" stroke-width="1"/>
-                <circle cx="950" cy="350" r="8" fill="none" stroke="#fff" stroke-width="2"/>
-                <circle cx="950" cy="350" r="4" fill="#fff"/>
-            </g>`,
-            
-            // Stage 3: Slight smile
-            `<g id="head-3">
-                <polygon points="920,320 980,350 920,380" fill="#000" stroke="#000" stroke-width="1"/>
-                <circle cx="950" cy="345" r="8" fill="none" stroke="#fff" stroke-width="2"/>
-                <circle cx="950" cy="345" r="4" fill="#fff"/>
-                <path d="M 935 368 Q 950 375 965 368" stroke="#fff" stroke-width="1.5" fill="none"/>
-            </g>`,
-            
-            // Stage 4: Clear smile
-            `<g id="head-4">
-                <polygon points="920,320 980,350 920,380" fill="#000" stroke="#000" stroke-width="1"/>
-                <circle cx="950" cy="343" r="9" fill="none" stroke="#fff" stroke-width="2"/>
-                <circle cx="950" cy="343" r="5" fill="#fff"/>
-                <path d="M 930 370 Q 950 378 970 370" stroke="#fff" stroke-width="2" fill="none"/>
-            </g>`,
-            
-            // Stage 5: Big smile, bright eye
-            `<g id="head-5">
-                <polygon points="920,320 980,350 920,380" fill="#000" stroke="#000" stroke-width="1"/>
-                <circle cx="950" cy="340" r="10" fill="none" stroke="#fff" stroke-width="2.5"/>
-                <circle cx="950" cy="340" r="6" fill="#fff"/>
-                <path d="M 925 372 Q 950 382 975 372" stroke="#fff" stroke-width="2.5" fill="none"/>
-            </g>`,
-            
-            // Stage 6: Radiant (fully complete)
-            `<g id="head-6">
-                <polygon points="920,320 980,350 920,380" fill="#000" stroke="#000" stroke-width="1"/>
-                <circle cx="950" cy="338" r="11" fill="none" stroke="#fff" stroke-width="3"/>
-                <circle cx="950" cy="338" r="7" fill="#fff"/>
-                <path d="M 920 375 Q 950 386 980 375" stroke="#fff" stroke-width="3" fill="none"/>
-                <!-- Sparkles -->
-                <circle cx="895" cy="310" r="2" fill="#fff"/>
-                <circle cx="960" cy="305" r="2" fill="#fff"/>
-                <circle cx="995" cy="315" r="1.5" fill="#fff"/>
-            </g>`
-        ];
-        
-        function triggerWobble() {
-            const svg = document.getElementById('fishboneSvg');
-            svg.classList.remove('wobble-active');
-            void svg.offsetWidth; // Force reflow to restart animation
-            svg.classList.add('wobble-active');
-        }
         
         function addCause(category) {
             state[category].push('');
@@ -440,26 +383,11 @@
             draw();
         }
         
-        function updateCompletion() {
-            const totalFields = 1 + Object.keys(state).filter(k => k !== 'problem').reduce((acc, cat) => acc + state[cat].length, 0);
-            const filledFields = (state.problem ? 1 : 0) + Object.keys(state).filter(k => k !== 'problem').reduce((acc, cat) => acc + state[cat].filter(v => v.trim()).length, 0);
-            const percent = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
-            
-            document.getElementById('completionText').textContent = `${percent}% complete`;
-            
-            // Update fish head based on completion
-            const headStage = Math.min(6, Math.floor(percent / 16.67));
-            
-            // Redraw with correct head
-            draw();
-            
-            // Then update head visibility
-            setTimeout(() => {
-                const headGroups = document.querySelectorAll('[id^="head-"]');
-                headGroups.forEach(g => g.style.display = 'none');
-                const activeHead = document.getElementById(`head-${headStage}`);
-                if (activeHead) activeHead.style.display = 'block';
-            }, 10);
+        function triggerWobble() {
+            const container = document.querySelector('.fishbone-container');
+            container.classList.remove('wobble-active');
+            void container.offsetWidth;
+            container.classList.add('wobble-active');
         }
         
         function renderInputs() {
@@ -497,58 +425,89 @@
             const height = parseFloat(viewBox[3]);
             
             const centerY = height / 2;
-            const spineStartX = 100;
-            const spineEndX = 850;
+            const spineStartX = 80;
+            const spineEndX = 1250;
             
             let svgContent = '';
             
-            // Main spine (bold black, pointing from right to left towards tail)
-            svgContent += `<line x1="${spineEndX}" y1="${centerY}" x2="${spineStartX}" y2="${centerY}" stroke="#000" stroke-width="4" stroke-linecap="round"/>`;
+            // Background
+            svgContent += `<rect x="0" y="0" width="${width}" height="${height}" fill="#7fffd4"/>`;
+            
+            // Spine - horizontal line from tail to head
+            svgContent += `<line x1="${spineStartX}" y1="${centerY}" x2="${spineEndX}" y2="${centerY}" stroke="#000" stroke-width="5" stroke-linecap="round"/>`;
+            
+            // Tail (left side)
+            svgContent += `<polygon points="${spineStartX},${centerY} ${spineStartX-40},${centerY-30} ${spineStartX-40},${centerY+30}" fill="#000"/>`;
+            
+            // Calculate completion for head
+            const totalFields = 1 + Object.keys(state).filter(k => k !== 'problem').reduce((acc, cat) => acc + state[cat].length, 0);
+            const filledFields = (state.problem ? 1 : 0) + Object.keys(state).filter(k => k !== 'problem').reduce((acc, cat) => acc + state[cat].filter(v => v.trim()).length, 0);
+            const percent = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+            const headScale = 0.4;
+            
+            // Fish head (right side) - switched between happy/sad
+            const headSvg = percent < 50 ? 
+                `<g transform="translate(${spineEndX + 40}, ${centerY}) scale(${headScale})"><path d="M117.18,245.19c0-24.8,11.52-46.9,29.48-61.28,0,.08,0,.15,0,.23,0,42.38,33.61,76.9,75.63,78.39,26.9-23.43,46.52-54.74,51.02-96.62C289.25,17.57,59,1.69,6.04,0,1.59-.14-1.12,6.92,1.38,12.16c13.72,28.77,45.93,101.45,45.93,149.5S14.26,289.68.86,319.87c-2.34,5.27.41,12.11,4.79,11.94,23.43-.9,82.98-5.23,140.07-26.08-17.43-14.39-28.54-36.16-28.54-60.53ZM103.93,102.88c0-18.29,14.83-33.12,33.12-33.12s33.12,14.83,33.12,33.12-14.83,33.12-33.12,33.12-33.12-14.83-33.12-33.12Z"/></g>` :
+                `<g transform="translate(${spineEndX + 40}, ${centerY}) scale(${headScale})"><path d="M117.18,245.19c0-24.8,11.52-46.9,29.48-61.28,0,.08,0,.15,0,.23,0,42.38,33.61,76.9,75.63,78.39,26.9-23.43,46.52-54.74,51.02-96.62C289.25,17.57,59,1.69,6.04,0,1.59-.14-1.12,6.92,1.38,12.16c13.72,28.77,45.93,101.45,45.93,149.5S14.26,289.68.86,319.87c-2.34,5.27.41,12.11,4.79,11.94,23.43-.9,82.98-5.23,140.07-26.08-17.43-14.39-28.54-36.16-28.54-60.53ZM103.93,102.88c0-18.29,14.83-33.12,33.12-33.12s33.12,14.83,33.12,33.12-14.83,33.12-33.12,33.12-33.12-14.83-33.12-33.12Z"/></g>`;
+            
+            svgContent += headSvg;
             
             // Bones and causes
-            categories.forEach(cat => {
+            categories.forEach((cat) => {
                 const boneX = spineStartX + (spineEndX - spineStartX) * cat.position;
-                const angle = cat.side === 'top' ? -45 : 45;
+                const isTop = cat.side === 'top';
+                const angle = isTop ? -45 : 45;
                 const rad = angle * Math.PI / 180;
-                const boneLength = 120;
+                const boneLength = 160;
                 const endX = boneX + boneLength * Math.cos(rad);
                 const endY = centerY + boneLength * Math.sin(rad);
                 
-                // Main bone (bold black)
-                svgContent += `<line x1="${boneX}" y1="${centerY}" x2="${endX}" y2="${endY}" stroke="#000" stroke-width="3" stroke-linecap="round"/>`;
+                // Main bone line
+                svgContent += `<line x1="${boneX}" y1="${centerY}" x2="${endX}" y2="${endY}" stroke="#000" stroke-width="4" stroke-linecap="round"/>`;
                 
-                // Bone label
-                const labelX = endX + (cat.side === 'top' ? -25 : -25);
-                const labelY = endY + (cat.side === 'top' ? -25 : 25);
-                svgContent += `<text x="${labelX}" y="${labelY}" font-size="12" font-weight="600" text-anchor="middle" fill="#000" text-transform="uppercase">${cat.label}</text>`;
+                // Category label on bone
+                const labelAngle = angle;
+                const labelRad = labelAngle * Math.PI / 180;
+                const labelDist = 90;
+                const labelX = boneX + labelDist * Math.cos(labelRad);
+                const labelY = centerY + labelDist * Math.sin(labelRad);
+                
+                svgContent += `<text x="${labelX}" y="${labelY}" font-size="14" font-weight="700" text-anchor="middle" fill="#000" dominant-baseline="middle">${cat.label}</text>`;
                 
                 // Sub-bones (causes)
                 const causes = state[cat.key];
                 causes.forEach((cause, idx) => {
-                    const subAngle = angle + (idx - causes.length / 2 + 0.5) * 18;
+                    const subAngle = angle + (idx - causes.length / 2 + 0.5) * 20;
                     const subRad = subAngle * Math.PI / 180;
-                    const subLength = 60;
+                    const subLength = 80;
                     const subEndX = endX + subLength * Math.cos(subRad);
                     const subEndY = endY + subLength * Math.sin(subRad);
                     
-                    svgContent += `<line x1="${endX}" y1="${endY}" x2="${subEndX}" y2="${subEndY}" stroke="#000" stroke-width="1.5" opacity="0.8" stroke-linecap="round"/>`;
+                    // Sub-bone line
+                    svgContent += `<line x1="${endX}" y1="${endY}" x2="${subEndX}" y2="${subEndY}" stroke="#000" stroke-width="2" opacity="0.7" stroke-linecap="round"/>`;
                     
-                    // Cause text (positioned to the left of spine)
+                    // Cause text (positioned along sub-bone)
                     if (cause.trim()) {
-                        const textX = subEndX + (cat.side === 'top' ? -15 : -15);
-                        const textAnchor = cat.side === 'top' ? 'end' : 'end';
-                        svgContent += `<text x="${textX}" y="${subEndY}" font-size="11" fill="#000" text-anchor="${textAnchor}" opacity="0.85">${cause}</text>`;
+                        const textDist = 40;
+                        const textRad = subRad;
+                        const textX = endX + textDist * Math.cos(textRad);
+                        const textY = endY + textDist * Math.sin(textRad);
+                        
+                        svgContent += `<text x="${textX}" y="${textY}" font-size="11" fill="#000" text-anchor="middle" dominant-baseline="middle" opacity="0.8">${cause}</text>`;
                     }
                 });
             });
             
-            // Fish head (triangle pointing right towards spine end)
-            svgContent += fishHeads[0]; // Placeholder; will be updated by completion
-            
-            // Fish tail (small triangle pointing left towards spine start)
-            svgContent += `<polygon points="100,340 40,350 100,360" fill="#000" stroke="#000" stroke-width="1"/>`;
-            
             svg.innerHTML = svgContent;
+        }
+        
+        function updateCompletion() {
+            const totalFields = 1 + Object.keys(state).filter(k => k !== 'problem').reduce((acc, cat) => acc + state[cat].length, 0);
+            const filledFields = (state.problem ? 1 : 0) + Object.keys(state).filter(k => k !== 'problem').reduce((acc, cat) => acc + state[cat].filter(v => v.trim()).length, 0);
+            const percent = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+            
+            document.getElementById('completionText').textContent = `${percent}% complete`;
+            draw();
         }
         
         function exportDiagram() {
@@ -556,15 +515,13 @@
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             
-            canvas.width = 1000;
+            canvas.width = 1400;
             canvas.height = 700;
             
             const svgData = new XMLSerializer().serializeToString(svg);
             const img = new Image();
             
             img.onload = function() {
-                ctx.fillStyle = '#0b0f19';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0, 0);
                 
                 const link = document.createElement('a');
@@ -581,7 +538,6 @@
         draw();
         updateCompletion();
         
-        // Auto-draw on resize
         window.addEventListener('resize', draw);
     </script>
 </body>
